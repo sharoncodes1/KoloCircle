@@ -1,0 +1,212 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}History | KoloCircle{% endblock %}
+
+{% block content %}
+<div class="history-page">
+    <div class="page-header">
+        <div>
+            <h1>Transaction History</h1>
+            <p class="text-muted">Complete record of all your transactions</p>
+        </div>
+        <div class="filter-group">
+            <select class="form-select">
+                <option>All Types</option>
+                <option>Deposits</option>
+                <option>Withdrawals</option>
+                <option>Transfers</option>
+                <option>Investments</option>
+            </select>
+            <select class="form-select">
+                <option>All Status</option>
+                <option>Completed</option>
+                <option>Pending</option>
+                <option>Failed</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Transaction List -->
+    <div class="transaction-list">
+        <div class="transaction-item">
+            <div class="transaction-icon completed">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="transaction-info">
+                <span class="name">Savings Deposit</span>
+                <span class="date">August 12, 2026 · 10:30 AM</span>
+            </div>
+            <span class="transaction-amount negative">-₦50,000</span>
+            <span class="badge-status completed">Completed</span>
+        </div>
+        <div class="transaction-item">
+            <div class="transaction-icon completed">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="transaction-info">
+                <span class="name">Investment Purchase</span>
+                <span class="date">August 10, 2026 · 3:15 PM</span>
+            </div>
+            <span class="transaction-amount negative">-₦100,000</span>
+            <span class="badge-status completed">Completed</span>
+        </div>
+        <div class="transaction-item">
+            <div class="transaction-icon pending">
+                <i class="bi bi-clock"></i>
+            </div>
+            <div class="transaction-info">
+                <span class="name">Withdrawal</span>
+                <span class="date">August 5, 2026 · 2:00 PM</span>
+            </div>
+            <span class="transaction-amount negative">-₦25,000</span>
+            <span class="badge-status pending">Pending</span>
+        </div>
+        <div class="transaction-item">
+            <div class="transaction-icon completed">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="transaction-info">
+                <span class="name">Dividend Payout</span>
+                <span class="date">August 2, 2026 · 11:45 AM</span>
+            </div>
+            <span class="transaction-amount positive">+₦12,500</span>
+            <span class="badge-status completed">Completed</span>
+        </div>
+        <div class="transaction-item">
+            <div class="transaction-icon failed">
+                <i class="bi bi-x-circle"></i>
+            </div>
+            <div class="transaction-info">
+                <span class="name">Investment Purchase</span>
+                <span class="date">July 28, 2026 · 4:20 PM</span>
+            </div>
+            <span class="transaction-amount negative">-₦75,000</span>
+            <span class="badge-status failed">Failed</span>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav class="pagination">
+        <button class="btn btn-outline-secondary">Previous</button>
+        <span class="page-info">Page 1 of 3</span>
+        <button class="btn btn-outline-secondary">Next</button>
+    </nav>
+</div>
+
+<style>
+    .history-page .filter-group {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .history-page .filter-group .form-select {
+        min-width: 160px;
+        border-radius: var(--radius-sm);
+        border: 1.5px solid var(--gray-200);
+        font-size: 0.9rem;
+        padding: 10px 14px;
+        background-color: white;
+    }
+    .history-page .transaction-list {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+    }
+    .transaction-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 28px;
+        border-bottom: 1px solid var(--gray-100);
+        transition: all 0.3s ease;
+    }
+    .transaction-item:last-child {
+        border-bottom: none;
+    }
+    .transaction-item:hover {
+        background: var(--gray-50);
+    }
+    .transaction-item .transaction-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+    .transaction-item .transaction-icon.completed {
+        background: var(--success-light);
+        color: var(--success);
+    }
+    .transaction-item .transaction-icon.pending {
+        background: var(--warning-light);
+        color: var(--warning);
+    }
+    .transaction-item .transaction-icon.failed {
+        background: var(--danger-light);
+        color: var(--danger);
+    }
+    .transaction-item .transaction-info {
+        flex: 1;
+        min-width: 0;
+    }
+    .transaction-item .transaction-info .name {
+        display: block;
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+    .transaction-item .transaction-info .date {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--gray-500);
+    }
+    .transaction-item .transaction-amount {
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    .transaction-item .transaction-amount.negative {
+        color: var(--danger);
+    }
+    .transaction-item .transaction-amount.positive {
+        color: var(--success);
+    }
+    .transaction-item .badge-status {
+        padding: 4px 14px;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+    }
+    .badge-status.completed {
+        background: var(--success-light);
+        color: var(--success);
+    }
+    .badge-status.pending {
+        background: var(--warning-light);
+        color: var(--warning);
+    }
+    .badge-status.failed {
+        background: var(--danger-light);
+        color: var(--danger);
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        margin-top: 24px;
+    }
+    .pagination .btn {
+        border-radius: var(--radius-sm);
+        padding: 8px 20px;
+        font-weight: 500;
+    }
+    .pagination .page-info {
+        color: var(--gray-500);
+        font-size: 0.9rem;
+    }
+</style>
+{% endblock %}

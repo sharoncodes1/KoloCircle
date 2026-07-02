@@ -1,0 +1,257 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Investments | KoloCircle{% endblock %}
+
+{% block content %}
+<div class="investments-page">
+    <div class="page-header">
+        <div>
+            <h1>Investment Portfolio</h1>
+            <p class="text-muted">Track your investments and returns</p>
+        </div>
+        <a href="#" class="btn btn-success">
+            <i class="bi bi-plus-lg"></i> New Investment
+        </a>
+    </div>
+
+    <!-- Investment Summary -->
+    <div class="investment-summary">
+        <div class="summary-card">
+            <span class="label">Total Invested</span>
+            <span class="value">₦650,000</span>
+        </div>
+        <div class="summary-card">
+            <span class="label">Total Returns</span>
+            <span class="value">₦100,000</span>
+            <span class="sub positive">+22%</span>
+        </div>
+        <div class="summary-card">
+            <span class="label">Active Investments</span>
+            <span class="value">4</span>
+        </div>
+    </div>
+
+    <!-- Investments Grid -->
+    <div class="investments-grid">
+        <div class="investment-card">
+            <div class="investment-header">
+                <div>
+                    <h4>Tech Growth Fund</h4>
+                    <span class="badge badge-growth">Growth</span>
+                </div>
+                <span class="return positive">+15.2%</span>
+            </div>
+            <div class="investment-details">
+                <div>
+                    <span class="label">Invested</span>
+                    <span class="value">₦200,000</span>
+                </div>
+                <div>
+                    <span class="label">Current Value</span>
+                    <span class="value">₦230,400</span>
+                </div>
+                <div>
+                    <span class="label">Term</span>
+                    <span class="value">12 Months</span>
+                </div>
+            </div>
+            <button class="btn btn-outline-primary w-100">View Details</button>
+        </div>
+
+        <div class="investment-card">
+            <div class="investment-header">
+                <div>
+                    <h4>Real Estate Trust</h4>
+                    <span class="badge badge-stable">Stable</span>
+                </div>
+                <span class="return positive">+8.7%</span>
+            </div>
+            <div class="investment-details">
+                <div>
+                    <span class="label">Invested</span>
+                    <span class="value">₦250,000</span>
+                </div>
+                <div>
+                    <span class="label">Current Value</span>
+                    <span class="value">₦271,750</span>
+                </div>
+                <div>
+                    <span class="label">Term</span>
+                    <span class="value">24 Months</span>
+                </div>
+            </div>
+            <button class="btn btn-outline-primary w-100">View Details</button>
+        </div>
+
+        <div class="investment-card">
+            <div class="investment-header">
+                <div>
+                    <h4>Agri-Bond</h4>
+                    <span class="badge badge-fixed">Fixed Income</span>
+                </div>
+                <span class="return positive">+5.3%</span>
+            </div>
+            <div class="investment-details">
+                <div>
+                    <span class="label">Invested</span>
+                    <span class="value">₦100,000</span>
+                </div>
+                <div>
+                    <span class="label">Current Value</span>
+                    <span class="value">₦105,300</span>
+                </div>
+                <div>
+                    <span class="label">Term</span>
+                    <span class="value">6 Months</span>
+                </div>
+            </div>
+            <button class="btn btn-outline-primary w-100">View Details</button>
+        </div>
+
+        <div class="investment-card">
+            <div class="investment-header">
+                <div>
+                    <h4>Green Energy Fund</h4>
+                    <span class="badge badge-growth">Growth</span>
+                </div>
+                <span class="return positive">+12.1%</span>
+            </div>
+            <div class="investment-details">
+                <div>
+                    <span class="label">Invested</span>
+                    <span class="value">₦100,000</span>
+                </div>
+                <div>
+                    <span class="label">Current Value</span>
+                    <span class="value">₦112,100</span>
+                </div>
+                <div>
+                    <span class="label">Term</span>
+                    <span class="value">18 Months</span>
+                </div>
+            </div>
+            <button class="btn btn-outline-primary w-100">View Details</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .investment-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+    .investment-summary .summary-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 20px 24px;
+        border: 1px solid var(--gray-200);
+    }
+    .investment-summary .summary-card .label {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--gray-500);
+        font-weight: 500;
+    }
+    .investment-summary .summary-card .value {
+        display: block;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 4px 0;
+    }
+    .investment-summary .summary-card .sub.positive {
+        font-size: 0.8rem;
+        color: var(--success);
+        font-weight: 600;
+    }
+    .investments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+    }
+    .investment-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 24px 28px;
+        border: 1px solid var(--gray-200);
+        transition: all 0.3s ease;
+    }
+    .investment-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+        border-color: var(--primary);
+    }
+    .investment-card .investment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+    }
+    .investment-card .investment-header h4 {
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: var(--gray-900);
+        margin: 0;
+    }
+    .investment-card .investment-header .badge {
+        padding: 4px 12px;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+    }
+    .badge-growth {
+        background: rgba(34, 197, 94, 0.10);
+        color: var(--success);
+    }
+    .badge-stable {
+        background: rgba(10, 44, 92, 0.08);
+        color: var(--primary);
+    }
+    .badge-fixed {
+        background: var(--warning-light);
+        color: var(--warning);
+    }
+    .investment-card .investment-header .return {
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 2px 12px;
+        border-radius: 60px;
+    }
+    .investment-card .investment-header .return.positive {
+        color: var(--success);
+        background: var(--success-light);
+    }
+    .investment-card .investment-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+        padding: 16px 0;
+        border-top: 1px solid var(--gray-200);
+        border-bottom: 1px solid var(--gray-200);
+    }
+    .investment-card .investment-details .label {
+        display: block;
+        font-size: 0.7rem;
+        color: var(--gray-500);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .investment-card .investment-details .value {
+        display: block;
+        font-weight: 600;
+        color: var(--gray-900);
+        font-size: 0.95rem;
+    }
+    .investment-card .btn {
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+</style>
+{% endblock %}

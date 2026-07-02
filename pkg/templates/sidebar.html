@@ -1,0 +1,50 @@
+<nav class="nav flex-column">
+    <span class="nav-label">Main</span>
+    
+    <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+    </a>
+    
+    <a href="{{ url_for('groups') }}" class="nav-link {% if request.endpoint == 'groups' or request.endpoint == 'group_detail' %}active{% endif %}">
+        <i class="bi bi-people-fill"></i> Groups
+        <span class="badge bg-danger ms-auto" style="font-size:0.6rem; padding:2px 6px;">4</span>
+    </a>
+    
+    <!-- Either create the route, or use # temporarily -->
+    <a href="{{ url_for('savings') }}" class="nav-link {% if request.endpoint == 'savings' %}active{% endif %}">
+        <i class="bi bi-piggy-bank"></i> Savings
+    </a>
+    
+    <a href="{{ url_for('investments') }}" class="nav-link {% if request.endpoint == 'investments' %}active{% endif %}">
+        <i class="bi bi-graph-up"></i> Investments
+    </a>
+
+    <div class="nav-divider"></div>
+
+    <span class="nav-label">Activity</span>
+    
+    <a href="{{ url_for('transfers') }}" class="nav-link {% if request.endpoint == 'transfers' %}active{% endif %}">
+        <i class="bi bi-arrow-left-right"></i> Transfers
+    </a>
+    
+    <a href="{{ url_for('history') }}" class="nav-link {% if request.endpoint == 'history' %}active{% endif %}">
+        <i class="bi bi-clock-history"></i> History
+    </a>
+    
+    <a href="{{ url_for('messages') }}" class="nav-link {% if request.endpoint == 'messages' %}active{% endif %}">
+        <i class="bi bi-envelope"></i> Messages
+        <span class="badge bg-danger ms-auto" style="font-size:0.6rem; padding:2px 6px;">3</span>
+    </a>
+
+    <div class="nav-divider"></div>
+
+    <span class="nav-label">Settings</span>
+    
+    <a href="{{ url_for('settings') }}" class="nav-link {% if request.endpoint == 'settings' %}active{% endif %}">
+        <i class="bi bi-gear"></i> Settings
+    </a>
+    
+    <a href="{{ url_for('help') }}" class="nav-link {% if request.endpoint == 'help' %}active{% endif %}">
+        <i class="bi bi-question-circle"></i> Help Center
+    </a>
+</nav>

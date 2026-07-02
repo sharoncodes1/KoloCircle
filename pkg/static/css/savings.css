@@ -1,0 +1,99 @@
+
+body{
+    background:#f5f7fb;
+}
+
+.sidebar{
+    min-height:100vh;
+    background:#083e9e;
+    padding:20px;
+}
+
+
+.sidebar a{
+    display:block;
+    color:white;
+    text-decoration:none;
+    padding:12px;
+    border-radius:10px;
+}
+@media (max-width: 992px) {
+
+    .sidebar{
+        min-height: auto;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        padding: 15px;
+        text-align: center;
+    }
+
+    .sidebar a{
+        flex: 1 1 45%;
+        margin: 5px;
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+.sidebar a:hover{
+    background:rgba(255,255,255,0.15);
+}
+
+/* CARDS */
+.card-box{
+    border:none;
+    border-radius:18px;
+}
+
+/* BALANCE */
+.balance-card{
+    background:linear-gradient(135deg,#083e9e,#2563eb);
+    color:white;
+    border-radius:20px;
+}
+
+/* PERSONAL SAVINGS */
+.savings-card{
+    border-radius:18px;
+    transition:0.3s;
+}
+
+.savings-card:hover{
+    transform:translateY(-5px);
+}
+
+/* AJO GROUP */
+.group-card{
+    border-radius:18px;
+    transition:0.3s;
+}
+
+.group-card:hover{
+    transform:translateY(-6px);
+}
+
+/* BUTTON */
+.btn-join{
+    background:#083e9e;
+    color:white;
+    border:none;
+}
+
+.btn-join:hover{
+    background:#062f78;
+}
+
+.avatar{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:#0d6efd;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+

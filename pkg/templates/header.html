@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KOLOCIRCLE</title>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+/>
+  <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 sticky-top">
+
+  <div class="container">
+    <a class="navbar-brand fw-bold text-primary fs-3" href="#">
+      KOLOCIRCLE
+    </a>
+    <button 
+      class="navbar-toggler" 
+      type="button" 
+      data-bs-toggle="collapse" 
+      data-bs-target="#menu"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- NAV MENU -->
+    <div class="collapse navbar-collapse" id="menu">
+     <ul class="navbar-nav ms-auto align-items-lg-center text-center">
+        <li class="nav-item">
+          <a class="nav-link px-3" href="#">
+            Features
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link px-3" href="/savings/">
+            Savings
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link px-3" href="#">
+            Community
+          </a>
+        </li>
+
+
+        <li class="nav-item  ms-lg-3">
+
+          <a href="/signup/" class="btn btn-primary px-4 rounded-pill">
+            Get Started
+          </a>
+
+        </li>
+
+
+        <li class="nav-item mt-3 mt-lg-0 ms-lg-2">
+
+          <a href="/login/" class="btn btn-outline-primary px-4 rounded-pill">
+            Login
+          </a>
+
+        </li>
+
+      </ul>
+       <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto py-lg-0">
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/login/">Login</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/advise/">Advise</a></li>
+                        <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/travel/">Travel</a></li>
+                         <li class="nav-item dropdown">
+                            <a class="nav-link px-lg-3 py-3 py-lg-4 dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              Hi Charles
+                            </a>
+                            <ul class="dropdown-menu px-4">
+                                <li><a class="dropdown-item" href="#">Sign Out</a></li>
+                            </ul>
+                          </li>
+                  
+                    </ul>
+                </div>
+
+    </div>
+
+  </div>
+</nav>

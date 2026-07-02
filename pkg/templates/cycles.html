@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOLOCIRCLE Cycles</title>
+
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+
+<style>
+
+body{
+    background:#f6f8ff;
+    font-family: Arial, sans-serif;
+}
+
+/* HEADER */
+.header{
+    background:white;
+    padding:20px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* CARD */
+.cycle-card{
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+.progress{
+    height:10px;
+    border-radius:20px;
+}
+.sidebar{
+    height:100vh;
+    background:white;
+    padding:20px;
+    box-shadow:2px 0 10px rgba(0,0,0,0.05);
+    position:fixed;
+    width:240px;
+}
+
+.sidebar h3{
+    color:#0d6efd;
+    font-weight:bold;
+}
+
+.sidebar a{
+    display:block;
+    padding:12px;
+    margin:8px 0;
+    text-decoration:none;
+    color:#333;
+    border-radius:10px;
+}
+
+.sidebar a:hover{
+    background:#e7f1ff;
+    color:#0d6efd;
+}
+
+.container{
+    margin-left:260px;
+    padding:30px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+<div class="container d-flex justify-content-between align-items-center">
+
+    <h3 class="text-primary fw-bold">Cycles</h3>
+
+    <a href="contributions.html" class="btn btn-outline-primary rounded-pill">
+        Back to Groups
+    </a>
+
+</div>
+</div>
+
+<!-- CYCLES -->
+ <div class="sidebar">
+
+
+    <a href="#">Dashboard</a>
+    <a href="savings.html">Savings</a>
+    <a href="contributions.html">Contributions 👥</a>
+    <a href="cycles.html" class="bg-primary">Cycles 🔄</a>
+    <a href="#">Transactions</a>
+    <a href="profile.html">Profile</a>
+
+    <hr>
+
+    <a href="admin.html" class="text-danger">
+        Admin Panel
+    </a>
+
+</div>
+<div class="container py-5">
+
+<div class="row g-4">
+
+    <!-- CYCLE 1 -->
+    <div class="col-md-6">
+
+        <div class="cycle-card">
+
+            <h5>Gold Savers Circle - Cycle 1</h5>
+
+            <p class="text-muted">₦10,000 weekly • 10 weeks cycle</p>
+
+            <p><b>Progress</b></p>
+
+            <div class="progress mb-3">
+                <div class="progress-bar bg-success" style="width:60%"></div>
+            </div>
+
+            <p>6/10 weeks completed</p>
+
+            <button class="btn btn-primary w-100 rounded-pill">
+                View Details
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- CYCLE 2 -->
+    <div class="col-md-6">
+
+        <div class="cycle-card">
+
+            <h5>Student Hustlers - Cycle 2</h5>
+
+            <p class="text-muted">₦2,000 weekly • 8 weeks cycle</p>
+
+            <p><b>Progress</b></p>
+
+            <div class="progress mb-3">
+                <div class="progress-bar bg-primary" style="width:30%"></div>
+            </div>
+
+            <p>2/8 weeks completed</p>
+
+            <button class="btn btn-primary w-100 rounded-pill">
+                View Details
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,616 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Dashboard | KoloCircle{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       DASHBOARD PAGE STYLES
+       ============================================ */
+    
+    /* Topbar */
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .topbar h3 {
+        font-weight: 700;
+        font-size: 1.6rem;
+        color: #0f172a;
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+
+    .topbar h3 .highlight {
+        color: #c9a84c;
+    }
+
+    .topbar .subtitle {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .topbar .right-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .topbar .avatar-large {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0a2c5c, #1a4a8a);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .topbar .avatar-large:hover {
+        transform: scale(1.05);
+    }
+
+    .topbar .notification-bell {
+        position: relative;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: white;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #475569;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .topbar .notification-bell:hover {
+        border-color: #0a2c5c;
+        color: #0a2c5c;
+    }
+
+    .topbar .notification-bell .badge-dot {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #ef4444;
+        border: 2px solid white;
+    }
+
+    /* Balance Card */
+    .balance-card {
+        background: linear-gradient(145deg, #0a2c5c, #1a4a8a);
+        border-radius: 20px;
+        padding: 32px 36px;
+        color: white;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .balance-card::before {
+        content: '';
+        position: absolute;
+        top: -40%;
+        right: -10%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(201, 168, 76, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .balance-card .label {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .balance-card h1 {
+        font-weight: 800;
+        font-size: 2.8rem;
+        letter-spacing: -0.02em;
+        margin: 4px 0 8px 0;
+        position: relative;
+        z-index: 2;
+    }
+
+    .balance-card .change {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255,255,255,0.12);
+        padding: 4px 16px;
+        border-radius: 60px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #6ee7b7;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 24px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        border-color: #0a2c5c;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+
+    .stat-card .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+    }
+
+    .stat-card .stat-icon.blue {
+        background: rgba(10, 44, 92, 0.08);
+        color: #0a2c5c;
+    }
+
+    .stat-card .stat-icon.gold {
+        background: rgba(201, 168, 76, 0.10);
+        color: #c9a84c;
+    }
+
+    .stat-card .stat-icon.green {
+        background: rgba(22, 163, 74, 0.08);
+        color: #16a34a;
+    }
+
+    .stat-card h6 {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0 0 4px 0;
+    }
+
+    .stat-card h3 {
+        font-weight: 700;
+        font-size: 1.4rem;
+        color: #0f172a;
+        margin: 0;
+    }
+
+    .stat-card .change-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 2px 12px;
+        border-radius: 60px;
+        margin-top: 6px;
+    }
+
+    .stat-card .change-badge.positive {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .quick-card {
+        background: white;
+        border-radius: 16px;
+        padding: 28px 32px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+    .quick-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        border-color: #0a2c5c;
+    }
+
+    .quick-card .icon-wrapper {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin-bottom: 16px;
+    }
+
+    .quick-card .icon-wrapper.primary {
+        background: rgba(10, 44, 92, 0.08);
+        color: #0a2c5c;
+    }
+
+    .quick-card .icon-wrapper.success {
+        background: rgba(22, 163, 74, 0.08);
+        color: #16a34a;
+    }
+
+    .quick-card h5 {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+    }
+
+    .quick-card p {
+        color: #64748b;
+        font-size: 0.9rem;
+        margin: 0 0 16px 0;
+    }
+
+    .btn-primary-custom {
+        background: #0a2c5c;
+        color: white;
+        padding: 10px 24px;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: none;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary-custom:hover {
+        background: #1a4a8a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(10, 44, 92, 0.2);
+        color: white;
+    }
+
+    .btn-success-custom {
+        background: #16a34a;
+        color: white;
+        padding: 10px 24px;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        border: none;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-success-custom:hover {
+        background: #15803d;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+        color: white;
+    }
+
+    /* Transactions */
+    .transaction-card {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+
+    .transaction-card .card-header {
+        background: white;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .transaction-card .card-header h5 {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0f172a;
+        margin: 0;
+    }
+
+    .transaction-card .card-header a {
+        color: #0a2c5c;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+
+    .transaction-card .card-header a:hover {
+        color: #c9a84c;
+    }
+
+    .transaction-card .table {
+        margin-bottom: 0;
+    }
+
+    .transaction-card .table thead th {
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 12px 20px;
+    }
+
+    .transaction-card .table tbody td {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+        color: #334155;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .transaction-card .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .transaction-card .table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .badge-status {
+        padding: 4px 14px;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+    }
+
+    .badge-status.completed {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    .badge-status.pending {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .badge-status.failed {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .topbar {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .topbar .right-group {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
+        .balance-card {
+            padding: 24px;
+        }
+
+        .balance-card h1 {
+            font-size: 2rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .quick-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-card h3 {
+            font-size: 1.2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .balance-card h1 {
+            font-size: 1.6rem;
+        }
+
+        .balance-card {
+            padding: 20px;
+        }
+
+        .quick-card {
+            padding: 20px;
+        }
+
+        .transaction-card .table thead th,
+        .transaction-card .table tbody td {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+    <!-- Topbar -->
+    <div class="topbar">
+        <div>
+            <h3>Welcome Back, <span class="highlight">Sharon</span> 👋</h3>
+            <div class="subtitle">Here's your financial overview</div>
+        </div>
+        <div class="right-group">
+            <div class="notification-bell">
+                <i class="bi bi-bell"></i>
+                <span class="badge-dot"></span>
+            </div>
+            <div class="avatar-large">S</div>
+        </div>
+    </div>
+
+    <!-- Balance Card -->
+    <div class="balance-card">
+        <div class="label">Total Portfolio</div>
+        <h1>₦1,250,000</h1>
+        <div class="change">
+            <i class="bi bi-arrow-up"></i> + ₦75,000 this month
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="bi bi-piggy-bank-fill"></i>
+            </div>
+            <h6>Savings</h6>
+            <h3>₦500,000</h3>
+            <span class="change-badge positive">
+                <i class="bi bi-arrow-up"></i> +12%
+            </span>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon gold">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <h6>Investments</h6>
+            <h3>₦650,000</h3>
+            <span class="change-badge positive">
+                <i class="bi bi-arrow-up"></i> +18%
+            </span>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="bi bi-currency-exchange"></i>
+            </div>
+            <h6>Returns</h6>
+            <h3>₦100,000</h3>
+            <span class="change-badge positive">
+                <i class="bi bi-arrow-up"></i> +22%
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <div class="quick-card">
+            <div class="icon-wrapper primary">
+                <i class="bi bi-plus-circle"></i>
+            </div>
+            <h5>Create Savings Plan</h5>
+            <p>Save towards your next goal automatically with flexible plans.</p>
+            <a href="{{ url_for('savings') }}" class="btn btn-primary-custom">
+                Start Saving <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="quick-card">
+            <div class="icon-wrapper success">
+                <i class="bi bi-arrow-up-right-circle"></i>
+            </div>
+            <h5>Invest Funds</h5>
+            <p>Grow your wealth with curated investment portfolios managed by experts.</p>
+            <a href="{{ url_for('investments') }}" class="btn btn-success-custom">
+                Invest Now <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="transaction-card">
+        <div class="card-header">
+            <h5>Recent Transactions</h5>
+            <a href="{{ url_for('history') }}">View all <i class="bi bi-chevron-right"></i></a>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Activity</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>12 Aug</strong></td>
+                        <td>Savings Deposit</td>
+                        <td>₦50,000</td>
+                        <td><span class="badge-status completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>10 Aug</strong></td>
+                        <td>Investment Purchase</td>
+                        <td>₦100,000</td>
+                        <td><span class="badge-status completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>05 Aug</strong></td>
+                        <td>Withdrawal</td>
+                        <td>₦25,000</td>
+                        <td><span class="badge-status pending">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>02 Aug</strong></td>
+                        <td>Dividend Payout</td>
+                        <td>₦12,500</td>
+                        <td><span class="badge-status completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>28 Jul</strong></td>
+                        <td>Investment Purchase</td>
+                        <td>₦75,000</td>
+                        <td><span class="badge-status failed">Failed</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

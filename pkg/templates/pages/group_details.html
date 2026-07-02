@@ -1,0 +1,280 @@
+{% include "header.html" %}
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- Sidebar -->
+        <div class="col-md-2 sidebar">
+
+            <h3 class="text-white mb-5">
+                KoloCircle
+            </h3>
+
+            <a href="/dashboard/" class="d-block text-white mb-4">
+                🏠 Dashboard
+            </a>
+
+            <a href="/savings/" class="d-block text-white mb-4">
+                💰 Personal Savings
+            </a>
+
+            <a href="/groups/" class="d-block text-white mb-4">
+                👥 Ajo Groups
+            </a>
+
+            <a href="/transactions/" class="d-block text-white mb-4">
+                📊 Transactions
+            </a>
+
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-10 p-4">
+
+            <div class="card shadow-lg border-0">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <h2>{{group.name}}</h2>
+                            <p class="text-muted">
+                                Managed by {{group.admin}}
+                            </p>
+                        </div>
+
+                        <button class="btn btn-primary">
+                            Contribute Now
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Summary -->
+
+            <div class="row mt-4">
+
+                <div class="col-md-3 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+
+                            <h6>Contribution</h6>
+
+                            <h4>
+                                {{group.amount}}
+                            </h4>
+
+                            <small>
+                                Weekly
+                            </small>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+
+                            <h6>Members</h6>
+
+                            <h4>
+                                {{group.members}}
+                            </h4>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+
+                            <h6>Current Cycle</h6>
+
+                            <h4>
+                                {{group.cycle}}
+                            </h4>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+
+                            <h6>Next Payout</h6>
+
+                            <h4>
+                                {{group.next_payout}}
+                            </h4>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Progress -->
+
+            <div class="card shadow-sm mt-3">
+
+                <div class="card-body">
+
+                    <h5>
+                        Group Progress
+                    </h5>
+
+                    <div class="progress mt-3" style="height:20px">
+
+                        <div
+                            class="progress-bar"
+                            style="width:60%">
+                            60%
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Payout Queue -->
+
+            <div class="card shadow-sm mt-4">
+
+                <div class="card-header">
+                    <h5>
+                        Payout Queue
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <ul class="list-group">
+
+                        <li class="list-group-item">
+                            ✅ Sharon
+                        </li>
+
+                        <li class="list-group-item">
+                            ✅ David
+                        </li>
+
+                        <li class="list-group-item active">
+                            ⭐ {{group.next_payout}}
+                        </li>
+
+                        <li class="list-group-item">
+                            Peter
+                        </li>
+
+                        <li class="list-group-item">
+                            Grace
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <!-- Members -->
+
+            <div class="card shadow-sm mt-4">
+
+                <div class="card-header">
+                    <h5>
+                        Members Contribution Status
+                    </h5>
+                </div>
+
+                <div class="table-responsive">
+
+                    <table class="table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>Sharon</td>
+                                <td>
+                                    <span class="badge bg-success">
+                                        Paid
+                                    </span>
+                                </td>
+                                <td>₦10,000</td>
+                            </tr>
+
+                            <tr>
+                                <td>Mary</td>
+                                <td>
+                                    <span class="badge bg-warning">
+                                        Pending
+                                    </span>
+                                </td>
+                                <td>₦10,000</td>
+                            </tr>
+
+                            <tr>
+                                <td>John</td>
+                                <td>
+                                    <span class="badge bg-success">
+                                        Paid
+                                    </span>
+                                </td>
+                                <td>₦10,000</td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            <!-- Updates -->
+
+            <div class="card shadow-sm mt-4">
+
+                <div class="card-header">
+                    <h5>
+                        Group Updates
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="alert alert-primary">
+                        Week 4 contribution closes on Friday.
+                    </div>
+
+                    <div class="alert alert-success">
+                        David received last week's payout.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% include "footer.html" %}

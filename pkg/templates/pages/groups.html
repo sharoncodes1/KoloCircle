@@ -1,0 +1,1171 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Join Savings Groups | KoloCircle{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       GROUPS PAGE STYLES
+       ============================================ */
+    :root {
+        --cw-primary: #0a2c5c;
+        --cw-primary-light: #1a4a8a;
+        --cw-primary-dark: #061a36;
+        --cw-accent: #c9a84c;
+        --cw-accent-light: #e8d5a0;
+        --cw-success: #10b981;
+        --cw-success-light: #d1fae5;
+        --cw-gray-50: #f8fafc;
+        --cw-gray-100: #f1f5f9;
+        --cw-gray-200: #e2e8f0;
+        --cw-gray-300: #cbd5e1;
+        --cw-gray-500: #64748b;
+        --cw-gray-700: #334155;
+        --cw-gray-900: #0f172a;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.10);
+        --radius: 16px;
+        --radius-sm: 12px;
+    }
+
+    .cw-page {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    /* ===== HEADER ===== */
+    .cw-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .cw-header-left h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--cw-gray-900);
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+
+    .cw-header-left p {
+        color: var(--cw-gray-500);
+        font-size: 0.95rem;
+        margin: 4px 0 0 0;
+    }
+
+    .cw-header-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .cw-btn-outline {
+        background: transparent;
+        border: 1.5px solid var(--cw-gray-200);
+        color: var(--cw-gray-700);
+        padding: 10px 24px;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .cw-btn-outline:hover {
+        border-color: var(--cw-primary);
+        color: var(--cw-primary);
+        background: rgba(10, 44, 92, 0.04);
+    }
+
+    .cw-btn-primary {
+        background: var(--cw-primary);
+        color: white;
+        padding: 10px 28px;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        border: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .cw-btn-primary:hover {
+        background: var(--cw-primary-light);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(10, 44, 92, 0.2);
+    }
+
+    /* ===== STATS ===== */
+    .cw-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .cw-stat-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 20px 24px;
+        border: 1px solid var(--cw-gray-200);
+        transition: all 0.2s ease;
+    }
+
+    .cw-stat-card:hover {
+        border-color: var(--cw-primary);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .cw-stat-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--cw-gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .cw-stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--cw-gray-900);
+        margin: 2px 0;
+    }
+
+    .cw-stat-change {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 2px 10px;
+        border-radius: 60px;
+    }
+
+    .cw-stat-change.positive {
+        background: var(--cw-success-light);
+        color: var(--cw-success);
+    }
+
+    .cw-stat-change.neutral {
+        background: var(--cw-gray-100);
+        color: var(--cw-gray-500);
+    }
+
+    /* ===== FILTER BAR ===== */
+    .cw-filter-bar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        padding: 16px 20px;
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--cw-gray-200);
+        align-items: center;
+    }
+
+    .cw-filter-bar .cw-filter-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .cw-filter-bar .cw-filter-group i {
+        color: var(--cw-gray-400);
+    }
+
+    .cw-filter-bar .cw-filter-group select {
+        padding: 8px 32px 8px 14px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--cw-gray-200);
+        font-size: 0.85rem;
+        color: var(--cw-gray-700);
+        background: white;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        cursor: pointer;
+    }
+
+    .cw-filter-bar .cw-filter-group select:focus {
+        border-color: var(--cw-primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(10, 44, 92, 0.06);
+    }
+
+    .cw-filter-bar .cw-search-box {
+        position: relative;
+        flex: 1;
+        min-width: 180px;
+    }
+
+    .cw-filter-bar .cw-search-box i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--cw-gray-400);
+    }
+
+    .cw-filter-bar .cw-search-box input {
+        width: 100%;
+        padding: 8px 16px 8px 40px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--cw-gray-200);
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .cw-filter-bar .cw-search-box input:focus {
+        border-color: var(--cw-primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(10, 44, 92, 0.06);
+    }
+
+    /* ===== SECTION HEADER ===== */
+    .cw-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .cw-section-header h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--cw-gray-900);
+        margin: 0;
+    }
+
+    .cw-section-header a {
+        color: var(--cw-primary);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .cw-section-header a:hover {
+        color: var(--cw-accent);
+    }
+
+    /* ===== GROUPS GRID ===== */
+    .cw-groups-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+
+    .cw-group-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 24px 28px;
+        border: 1px solid var(--cw-gray-200);
+        transition: all 0.2s ease;
+        animation: cwFadeUp 0.4s ease forwards;
+        position: relative;
+    }
+
+    .cw-group-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--cw-primary), var(--cw-accent));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .cw-group-card:hover::before {
+        opacity: 1;
+    }
+
+    .cw-group-card:nth-child(2) { animation-delay: 0.08s; }
+    .cw-group-card:nth-child(3) { animation-delay: 0.16s; }
+    .cw-group-card:nth-child(4) { animation-delay: 0.24s; }
+
+    @keyframes cwFadeUp {
+        from { opacity: 0; transform: translateY(16px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cw-group-card:hover {
+        border-color: var(--cw-primary);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+    }
+
+    .cw-group-card .cw-group-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 8px;
+    }
+
+    .cw-group-card .cw-group-name {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--cw-gray-900);
+        margin: 0;
+    }
+
+    .cw-group-badge {
+        padding: 3px 12px;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .cw-group-badge.open {
+        background: var(--cw-success-light);
+        color: var(--cw-success);
+    }
+
+    .cw-group-badge.full {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .cw-group-badge.closed {
+        background: var(--cw-gray-100);
+        color: var(--cw-gray-500);
+    }
+
+    .cw-group-card .cw-group-desc {
+        color: var(--cw-gray-500);
+        font-size: 0.85rem;
+        margin: 0 0 12px 0;
+    }
+
+    .cw-group-card .cw-group-meta {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+        font-size: 0.85rem;
+        color: var(--cw-gray-600);
+    }
+
+    .cw-group-card .cw-group-meta i {
+        color: var(--cw-gray-400);
+        margin-right: 4px;
+    }
+
+    .cw-group-card .cw-group-meta strong {
+        color: var(--cw-gray-700);
+    }
+
+    .cw-group-card .cw-group-progress {
+        margin-bottom: 12px;
+    }
+
+    .cw-group-card .cw-progress-track {
+        height: 6px;
+        background: var(--cw-gray-200);
+        border-radius: 60px;
+        overflow: hidden;
+        margin-bottom: 4px;
+    }
+
+    .cw-group-card .cw-progress-fill {
+        height: 100%;
+        background: var(--cw-primary);
+        border-radius: 60px;
+        transition: width 0.6s ease;
+    }
+
+    .cw-group-card .cw-progress-fill.green {
+        background: var(--cw-success);
+    }
+    .cw-group-card .cw-progress-fill.gold {
+        background: #d97706;
+    }
+    .cw-group-card .cw-progress-fill.gray {
+        background: var(--cw-gray-300);
+    }
+
+    .cw-group-card .cw-progress-text {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: var(--cw-gray-500);
+    }
+
+    .cw-group-card .cw-group-admin {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-top: 1px solid var(--cw-gray-100);
+        margin-bottom: 12px;
+    }
+
+    .cw-group-card .cw-admin-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--cw-accent-light);
+        color: var(--cw-accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+    }
+
+    .cw-group-card .cw-admin-info .cw-admin-name {
+        display: block;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--cw-gray-700);
+    }
+
+    .cw-group-card .cw-admin-info .cw-admin-role {
+        display: block;
+        font-size: 0.7rem;
+        color: var(--cw-gray-500);
+    }
+
+    .cw-group-card .cw-group-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .cw-btn-join {
+        flex: 1;
+        padding: 10px 20px;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: none;
+        background: var(--cw-primary);
+        color: white;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-width: 120px;
+    }
+
+    .cw-btn-join:hover {
+        background: var(--cw-primary-light);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .cw-btn-join.outline {
+        background: transparent;
+        border: 1.5px solid var(--cw-gray-200);
+        color: var(--cw-gray-700);
+    }
+
+    .cw-btn-join.outline:hover {
+        border-color: var(--cw-primary);
+        color: var(--cw-primary);
+        background: rgba(10, 44, 92, 0.04);
+    }
+
+    .cw-btn-join:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .cw-btn-admin {
+        padding: 10px 16px;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        border: 1.5px solid var(--cw-gray-200);
+        background: transparent;
+        color: var(--cw-gray-500);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .cw-btn-admin:hover {
+        border-color: var(--cw-primary);
+        color: var(--cw-primary);
+    }
+
+    /* ===== MY GROUPS ===== */
+    .cw-my-groups {
+        margin-top: 40px;
+    }
+
+    .cw-my-group-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .cw-my-group-item {
+        background: white;
+        border-radius: var(--radius);
+        padding: 16px 24px;
+        border: 1px solid var(--cw-gray-200);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .cw-my-group-item:hover {
+        border-color: var(--cw-primary);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .cw-my-group-item .cw-group-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .cw-my-group-item .cw-group-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-sm);
+        background: rgba(10, 44, 92, 0.06);
+        color: var(--cw-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+
+    .cw-my-group-item .cw-info-name {
+        display: block;
+        font-weight: 700;
+        color: var(--cw-gray-900);
+        font-size: 1rem;
+    }
+
+    .cw-my-group-item .cw-info-details {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--cw-gray-500);
+    }
+
+    .cw-my-group-item .cw-group-status {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .cw-status-badge {
+        padding: 4px 12px;
+        border-radius: 60px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .cw-status-badge.active {
+        background: var(--cw-success-light);
+        color: var(--cw-success);
+    }
+
+    .cw-status-badge.pending {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .cw-my-group-item .cw-amount {
+        font-weight: 700;
+        color: var(--cw-gray-900);
+    }
+
+    .cw-btn-manage {
+        padding: 6px 16px;
+        border-radius: 60px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1.5px solid var(--cw-gray-200);
+        background: transparent;
+        color: var(--cw-gray-600);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .cw-btn-manage:hover {
+        border-color: var(--cw-primary);
+        color: var(--cw-primary);
+    }
+
+    /* ===== MODAL ===== */
+    .cw-modal .modal-content {
+        border-radius: var(--radius);
+        border: none;
+        box-shadow: var(--shadow-lg);
+    }
+
+    .cw-modal .modal-header {
+        border-bottom: 1px solid var(--cw-gray-200);
+        padding: 20px 24px;
+    }
+
+    .cw-modal .modal-header .modal-title {
+        font-weight: 700;
+        color: var(--cw-gray-900);
+    }
+
+    .cw-modal .modal-body {
+        padding: 24px;
+    }
+
+    .cw-modal .modal-body .form-label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--cw-gray-700);
+    }
+
+    .cw-modal .modal-body .form-control,
+    .cw-modal .modal-body .form-select {
+        border-radius: var(--radius-sm);
+        border: 1.5px solid var(--cw-gray-200);
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .cw-modal .modal-body .form-control:focus,
+    .cw-modal .modal-body .form-select:focus {
+        border-color: var(--cw-primary);
+        box-shadow: 0 0 0 4px rgba(10, 44, 92, 0.06);
+    }
+
+    .cw-modal .modal-footer {
+        border-top: 1px solid var(--cw-gray-200);
+        padding: 16px 24px;
+    }
+
+    .cw-modal .modal-footer .btn-secondary {
+        background: var(--cw-gray-100);
+        color: var(--cw-gray-700);
+        border: none;
+        padding: 10px 24px;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+    }
+
+    .cw-modal .modal-footer .btn-secondary:hover {
+        background: var(--cw-gray-200);
+    }
+
+    .cw-modal .modal-footer .btn-primary {
+        background: var(--cw-primary);
+        color: white;
+        border: none;
+        padding: 10px 28px;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .cw-modal .modal-footer .btn-primary:hover {
+        background: var(--cw-primary-light);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 992px) {
+        .cw-groups-grid {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .cw-main {
+            padding: 16px;
+        }
+
+        .cw-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .cw-header-actions {
+            width: 100%;
+        }
+
+        .cw-header-actions .cw-btn-outline,
+        .cw-header-actions .cw-btn-primary {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .cw-filter-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .cw-filter-bar .cw-filter-group {
+            flex-wrap: wrap;
+        }
+
+        .cw-filter-bar .cw-filter-group select {
+            flex: 1;
+        }
+
+        .cw-filter-bar .cw-search-box {
+            min-width: unset;
+        }
+
+        .cw-stats {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .cw-groups-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cw-my-group-item {
+            flex-direction: column;
+            align-items: stretch;
+            text-align: center;
+        }
+
+        .cw-my-group-item .cw-group-info {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .cw-my-group-item .cw-group-status {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .cw-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .cw-stat-value {
+            font-size: 1.2rem;
+        }
+
+        .cw-group-card {
+            padding: 16px 20px;
+        }
+
+        .cw-group-card .cw-group-actions {
+            flex-direction: column;
+        }
+
+        .cw-group-card .cw-group-actions .cw-btn-join {
+            min-width: unset;
+        }
+
+        .cw-my-group-item .cw-group-status {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .cw-my-group-item .cw-group-status .cw-btn-manage {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cw-page">
+    <!-- ===== HEADER ===== -->
+    <div class="cw-header">
+        <div class="cw-header-left">
+            <h1>Join Savings Groups</h1>
+            <p>Discover and join collaborative savings circles with trusted members</p>
+        </div>
+        <div class="cw-header-actions">
+            <a href="#" class="cw-btn-outline" data-bs-toggle="modal" data-bs-target="#createGroupModal">
+                <i class="bi bi-plus-lg"></i> Create Group
+            </a>
+            <a href="#" class="cw-btn-primary">
+                <i class="bi bi-people"></i> My Groups
+            </a>
+        </div>
+    </div>
+
+    <!-- ===== STATS ===== -->
+    <div class="cw-stats">
+        <div class="cw-stat-card">
+            <span class="cw-stat-label">My Groups</span>
+            <div class="cw-stat-value">4</div>
+            <span class="cw-stat-change positive">
+                <i class="bi bi-check-circle"></i> Active
+            </span>
+        </div>
+        <div class="cw-stat-card">
+            <span class="cw-stat-label">Total Saved</span>
+            <div class="cw-stat-value">₦320,000</div>
+            <span class="cw-stat-change positive">
+                <i class="bi bi-arrow-up-short"></i> +15%
+            </span>
+        </div>
+        <div class="cw-stat-card">
+            <span class="cw-stat-label">Available Groups</span>
+            <div class="cw-stat-value">12</div>
+            <span class="cw-stat-change neutral">
+                <i class="bi bi-clock"></i> 5 new
+            </span>
+        </div>
+    </div>
+
+    <!-- ===== FILTER BAR ===== -->
+    <div class="cw-filter-bar">
+        <div class="cw-filter-group">
+            <i class="bi bi-tag"></i>
+            <select>
+                <option>All Groups</option>
+                <option>Family</option>
+                <option>Friends</option>
+                <option>Business</option>
+                <option>Community</option>
+            </select>
+        </div>
+        <div class="cw-filter-group">
+            <i class="bi bi-clock"></i>
+            <select>
+                <option>Any Frequency</option>
+                <option>Weekly</option>
+                <option>Monthly</option>
+                <option>Quarterly</option>
+            </select>
+        </div>
+        <div class="cw-search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="Search groups by name...">
+        </div>
+    </div>
+
+    <!-- ===== AVAILABLE GROUPS ===== -->
+    <div class="cw-section-header">
+        <h3><i class="bi bi-compass" style="color: var(--cw-accent);"></i> Discover Groups</h3>
+    </div>
+
+    <div class="cw-groups-grid">
+        <!-- Group 1 -->
+        <div class="cw-group-card">
+            <div class="cw-group-top">
+                <h4 class="cw-group-name">Family Ajo Circle</h4>
+                <span class="cw-group-badge open">Open</span>
+            </div>
+            <p class="cw-group-desc">Weekly savings circle for family members</p>
+            <div class="cw-group-meta">
+                <span><i class="bi bi-calendar"></i> Weekly</span>
+                <span><i class="bi bi-people"></i> <strong>8</strong>/10</span>
+                <span><i class="bi bi-currency-naira"></i> <strong>₦10,000</strong></span>
+            </div>
+            <div class="cw-group-progress">
+                <div class="cw-progress-track">
+                    <div class="cw-progress-fill" style="width: 80%;"></div>
+                </div>
+                <div class="cw-progress-text">
+                    <span>8 of 10 members joined</span>
+                </div>
+            </div>
+            <div class="cw-group-admin">
+                <div class="cw-admin-avatar">T</div>
+                <div class="cw-admin-info">
+                    <span class="cw-admin-name">Tunde Adeyemi</span>
+                    <span class="cw-admin-role">Group Admin</span>
+                </div>
+            </div>
+            <div class="cw-group-actions">
+                <button class="cw-btn-join">
+                    <i class="bi bi-person-plus"></i> Join Group
+                </button>
+                <button class="cw-btn-admin">
+                    <i class="bi bi-info-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Group 2 -->
+        <div class="cw-group-card">
+            <div class="cw-group-top">
+                <h4 class="cw-group-name">Friends Savings Club</h4>
+                <span class="cw-group-badge open">Open</span>
+            </div>
+            <p class="cw-group-desc">Monthly savings with close friends</p>
+            <div class="cw-group-meta">
+                <span><i class="bi bi-calendar"></i> Monthly</span>
+                <span><i class="bi bi-people"></i> <strong>5</strong>/10</span>
+                <span><i class="bi bi-currency-naira"></i> <strong>₦5,000</strong></span>
+            </div>
+            <div class="cw-group-progress">
+                <div class="cw-progress-track">
+                    <div class="cw-progress-fill green" style="width: 50%;"></div>
+                </div>
+                <div class="cw-progress-text">
+                    <span>5 of 10 members joined</span>
+                </div>
+            </div>
+            <div class="cw-group-admin">
+                <div class="cw-admin-avatar">Z</div>
+                <div class="cw-admin-info">
+                    <span class="cw-admin-name">Zainab Bello</span>
+                    <span class="cw-admin-role">Group Admin</span>
+                </div>
+            </div>
+            <div class="cw-group-actions">
+                <button class="cw-btn-join">
+                    <i class="bi bi-person-plus"></i> Join Group
+                </button>
+                <button class="cw-btn-admin">
+                    <i class="bi bi-info-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Group 3 -->
+        <div class="cw-group-card">
+            <div class="cw-group-top">
+                <h4 class="cw-group-name">Business Ajo Network</h4>
+                <span class="cw-group-badge full">Almost Full</span>
+            </div>
+            <p class="cw-group-desc">Professional networking and savings</p>
+            <div class="cw-group-meta">
+                <span><i class="bi bi-calendar"></i> Monthly</span>
+                <span><i class="bi bi-people"></i> <strong>9</strong>/10</span>
+                <span><i class="bi bi-currency-naira"></i> <strong>₦20,000</strong></span>
+            </div>
+            <div class="cw-group-progress">
+                <div class="cw-progress-track">
+                    <div class="cw-progress-fill gold" style="width: 90%;"></div>
+                </div>
+                <div class="cw-progress-text">
+                    <span>9 of 10 members joined</span>
+                </div>
+            </div>
+            <div class="cw-group-admin">
+                <div class="cw-admin-avatar">C</div>
+                <div class="cw-admin-info">
+                    <span class="cw-admin-name">Chidi Okafor</span>
+                    <span class="cw-admin-role">Group Admin</span>
+                </div>
+            </div>
+            <div class="cw-group-actions">
+                <button class="cw-btn-join outline">
+                    <i class="bi bi-clock"></i> Pending Approval
+                </button>
+                <button class="cw-btn-admin">
+                    <i class="bi bi-info-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Group 4 -->
+        <div class="cw-group-card">
+            <div class="cw-group-top">
+                <h4 class="cw-group-name">Community Support Circle</h4>
+                <span class="cw-group-badge closed">Closed</span>
+            </div>
+            <p class="cw-group-desc">Community-based savings initiative</p>
+            <div class="cw-group-meta">
+                <span><i class="bi bi-calendar"></i> Monthly</span>
+                <span><i class="bi bi-people"></i> <strong>10</strong>/10</span>
+                <span><i class="bi bi-currency-naira"></i> <strong>₦15,000</strong></span>
+            </div>
+            <div class="cw-group-progress">
+                <div class="cw-progress-track">
+                    <div class="cw-progress-fill gray" style="width: 100%;"></div>
+                </div>
+                <div class="cw-progress-text">
+                    <span>Full — join waitlist</span>
+                </div>
+            </div>
+            <div class="cw-group-admin">
+                <div class="cw-admin-avatar">A</div>
+                <div class="cw-admin-info">
+                    <span class="cw-admin-name">Amara Nwosu</span>
+                    <span class="cw-admin-role">Group Admin</span>
+                </div>
+            </div>
+            <div class="cw-group-actions">
+                <button class="cw-btn-join outline" disabled>
+                    <i class="bi bi-list"></i> Join Waitlist
+                </button>
+                <button class="cw-btn-admin">
+                    <i class="bi bi-info-circle"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MY GROUPS ===== -->
+    <div class="cw-my-groups">
+        <div class="cw-section-header">
+            <h3><i class="bi bi-person-check" style="color: var(--cw-accent);"></i> My Groups</h3>
+            <a href="#">View All <i class="bi bi-chevron-right"></i></a>
+        </div>
+
+        <div class="cw-my-group-list">
+            <div class="cw-my-group-item">
+                <div class="cw-group-info">
+                    <div class="cw-group-icon"><i class="bi bi-people"></i></div>
+                    <div>
+                        <span class="cw-info-name">Family Ajo Circle</span>
+                        <span class="cw-info-details">Weekly · ₦10,000 · 8 members</span>
+                    </div>
+                </div>
+                <div class="cw-group-status">
+                    <span class="cw-status-badge active">Active</span>
+                    <span class="cw-amount">₦80,000</span>
+                    <button class="cw-btn-manage">Manage</button>
+                </div>
+            </div>
+
+            <div class="cw-my-group-item">
+                <div class="cw-group-info">
+                    <div class="cw-group-icon"><i class="bi bi-people"></i></div>
+                    <div>
+                        <span class="cw-info-name">Friends Savings Club</span>
+                        <span class="cw-info-details">Monthly · ₦5,000 · 5 members</span>
+                    </div>
+                </div>
+                <div class="cw-group-status">
+                    <span class="cw-status-badge pending">Pending</span>
+                    <span class="cw-amount">₦25,000</span>
+                    <button class="cw-btn-manage">Manage</button>
+                </div>
+            </div>
+
+            <div class="cw-my-group-item">
+                <div class="cw-group-info">
+                    <div class="cw-group-icon"><i class="bi bi-people"></i></div>
+                    <div>
+                        <span class="cw-info-name">Business Ajo Network</span>
+                        <span class="cw-info-details">Monthly · ₦20,000 · 9 members</span>
+                    </div>
+                </div>
+                <div class="cw-group-status">
+                    <span class="cw-status-badge active">Active</span>
+                    <span class="cw-amount">₦180,000</span>
+                    <button class="cw-btn-manage">Manage</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+CREATE GROUP MODAL
+========================================== -->
+<div class="modal fade cw-modal" id="createGroupModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Savings Group</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createGroupForm">
+                    <div class="mb-3">
+                        <label class="form-label">Group Name</label>
+                        <input type="text" class="form-control" placeholder="e.g., Office Ajo" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" required>
+                            <option value="">Select category...</option>
+                            <option value="family">Family</option>
+                            <option value="friends">Friends</option>
+                            <option value="business">Business</option>
+                            <option value="community">Community</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contribution Amount</label>
+                        <input type="number" class="form-control" placeholder="₦0.00" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Frequency</label>
+                        <select class="form-select" required>
+                            <option value="">Select frequency...</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Max Members</label>
+                        <input type="number" class="form-control" value="10" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" rows="2" placeholder="What is this group about?"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn-primary" onclick="createGroup()">Create Group</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ===== CREATE GROUP =====
+    function createGroup() {
+        const form = document.getElementById('createGroupForm');
+        const inputs = form.querySelectorAll('input, select, textarea');
+        let isValid = true;
+        
+        inputs.forEach(input => {
+            if (input.hasAttribute('required') && !input.value.trim()) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+        
+        if (isValid) {
+            alert('✅ New savings group created successfully!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('createGroupModal'));
+            if (modal) modal.hide();
+            form.reset();
+        } else {
+            alert('Please fill in all required fields.');
+        }
+    }
+
+    // ===== REMOVE INVALID CLASS ON INPUT =====
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.form-control, .form-select').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+            });
+        });
+    });
+</script>
+{% endblock %}

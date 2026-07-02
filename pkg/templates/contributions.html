@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOLOCIRCLE Contributions</title>
+
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+
+<style>
+
+body{
+    background:#f6f8ff;
+    font-family: Arial, sans-serif;
+}
+
+/* HERO */
+.header{
+    background:white;
+    padding:20px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* CARD */
+.group-card{
+    background:white;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.05);
+    transition:0.3s;
+}
+
+.group-card:hover{
+    transform:translateY(-5px);
+}
+
+.badge-custom{
+    background:#e7f1ff;
+    color:#0d6efd;
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:12px;
+}
+
+.btn-join{
+    border-radius:30px;
+}
+.container{
+    margin-left:260px;
+    padding:30px;
+}
+.sidebar{
+    height:100vh;
+    background:white;
+    padding:20px;
+    box-shadow:2px 0 10px rgba(0,0,0,0.05);
+    position:fixed;
+    width:240px;
+}
+
+.sidebar h3{
+    color:#0d6efd;
+    font-weight:bold;
+}
+
+.sidebar a{
+    display:block;
+    padding:12px;
+    margin:8px 0;
+    text-decoration:none;
+    color:#333;
+    border-radius:10px;
+}
+
+.sidebar a:hover{
+    background:#e7f1ff;
+    color:#0d6efd;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+<div class="container d-flex justify-content-between align-items-center">
+
+    <h3 class="text-primary fw-bold">Contributions</h3>
+
+    <a href="cycles.html" class="btn btn-outline-primary rounded-pill">
+        View Cycles
+    </a>
+
+</div>
+</div>
+
+   <div class="sidebar">
+
+
+    <a href="#">Dashboard</a>
+    <a href="savings.html">Savings</a>
+    <a href="contributions.html" class="bg-primary">Contributions 👥</a>
+    <a href="cycles.html">Cycles 🔄</a>
+    <a href="#">Transactions</a>
+    <a href="profile.html">Profile</a>
+
+    <hr>
+
+    <a href="admin.html" class="text-danger">
+        Admin Panel
+    </a>
+
+</div>
+<!-- GROUPS -->
+
+<div class="container py-5">
+
+<div class="row g-4">
+
+    <!-- GROUP 1 -->
+    <div class="col-md-4">
+
+        <div class="group-card">
+
+            <h5>Gold Savers Circle</h5>
+
+            <p class="text-muted">₦10,000 weekly</p>
+
+            <span class="badge-custom">10 members</span>
+
+            <div class="mt-3">
+                <button class="btn btn-primary w-100 btn-join">
+                    Join Group
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- GROUP 2 -->
+    <div class="col-md-4">
+
+        <div class="group-card">
+
+            <h5>Student Hustlers</h5>
+
+            <p class="text-muted">₦2,000 weekly</p>
+
+            <span class="badge-custom">8 members</span>
+
+            <div class="mt-3">
+                <button class="btn btn-primary w-100 btn-join">
+                    Join Group
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- GROUP 3 -->
+    <div class="col-md-4">
+
+        <div class="group-card">
+
+            <h5>Business Builders</h5>
+
+            <p class="text-muted">₦25,000 weekly</p>
+
+            <span class="badge-custom">6 members</span>
+
+            <div class="mt-3">
+                <button class="btn btn-primary w-100 btn-join">
+                    Join Group
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</body>
+</html>
