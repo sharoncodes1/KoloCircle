@@ -1,0 +1,788 @@
+{% extends "user/layouts.html" %}
+
+{% block title %}Help Center | KoloCircle{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       HELP CENTER - IMPROVED VERSION
+       ============================================ */
+    .help-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+
+    .help-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .help-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .help-header h1 i {
+        color: #4a6cf7;
+    }
+
+    .help-header p {
+        color: var(--text-muted);
+        font-size: 1.05rem;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    /* ===== SEARCH ===== */
+    .help-search {
+        max-width: 600px;
+        margin: 0 auto 2.5rem auto;
+        position: relative;
+    }
+
+    .help-search .search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        z-index: 4;
+    }
+
+    .help-search .form-control {
+        height: 56px;
+        border-radius: 16px;
+        padding-left: 48px;
+        border: 1.5px solid var(--border-color);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        background: var(--bg-card);
+        color: var(--text-primary);
+    }
+
+    .help-search .form-control:focus {
+        border-color: #4a6cf7;
+        box-shadow: 0 0 0 4px rgba(74, 108, 247, 0.08);
+        outline: none;
+    }
+
+    .help-search .form-control::placeholder {
+        color: var(--text-muted);
+    }
+
+    .help-search .search-btn {
+        position: absolute;
+        right: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #4a6cf7;
+        border: none;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .help-search .search-btn:hover {
+        background: #3a5cd9;
+    }
+
+    /* ===== CATEGORIES ===== */
+    .help-categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .help-category {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 1.75rem 1.5rem;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .help-category::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: #4a6cf7;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+
+    .help-category:hover {
+        transform: translateY(-4px);
+        border-color: #4a6cf7;
+        box-shadow: 0 8px 32px var(--shadow-color);
+    }
+
+    .help-category:hover::after {
+        opacity: 1;
+    }
+
+    .help-category .category-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .help-category .category-icon.blue {
+        background: rgba(74, 108, 247, 0.1);
+        color: #4a6cf7;
+    }
+
+    .help-category .category-icon.green {
+        background: rgba(25, 135, 84, 0.1);
+        color: #198754;
+    }
+
+    .help-category .category-icon.gold {
+        background: rgba(255, 193, 7, 0.1);
+        color: #ffc107;
+    }
+
+    .help-category .category-icon.purple {
+        background: rgba(139, 92, 246, 0.1);
+        color: #8b5cf6;
+    }
+
+    .help-category .category-icon.red {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+
+    .help-category .category-icon.teal {
+        background: rgba(20, 184, 166, 0.1);
+        color: #14b8a6;
+    }
+
+    .help-category h4 {
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: var(--text-primary);
+        margin: 0 0 4px 0;
+    }
+
+    .help-category p {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        margin: 0 0 12px 0;
+    }
+
+    .help-category .article-count {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .help-category .category-link {
+        color: #4a6cf7;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .help-category .category-link:hover {
+        gap: 12px;
+        color: #3a5cd9;
+    }
+
+    /* ===== FAQ SECTION ===== */
+    .faq-section {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 2rem 2.25rem;
+        border: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .faq-section .faq-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .faq-section .faq-header h3 {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .faq-section .faq-header h3 i {
+        color: #4a6cf7;
+    }
+
+    .faq-section .faq-header a {
+        color: #4a6cf7;
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+
+    .faq-section .faq-header a:hover {
+        color: #3a5cd9;
+        text-decoration: underline;
+    }
+
+    /* ===== ACCORDION ===== */
+    .faq-section .accordion-item {
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        background: transparent;
+    }
+
+    .faq-section .accordion-item:last-child {
+        border-bottom: none;
+    }
+
+    .faq-section .accordion-button {
+        padding: 1rem 0;
+        font-weight: 600;
+        color: var(--text-primary);
+        background: transparent;
+        box-shadow: none;
+        font-size: 0.95rem;
+        gap: 12px;
+        display: flex;
+        align-items: center;
+    }
+
+    .faq-section .accordion-button:not(.collapsed) {
+        color: #4a6cf7;
+        background: transparent;
+    }
+
+    .faq-section .accordion-button:focus {
+        box-shadow: none;
+    }
+
+    .faq-section .accordion-button .faq-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(74, 108, 247, 0.08);
+        color: #4a6cf7;
+        font-size: 0.75rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .faq-section .accordion-button::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2364748b' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+        background-size: 14px;
+        width: 14px;
+        height: 14px;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .faq-section .accordion-button:not(.collapsed)::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%234a6cf7' class='bi bi-chevron-up' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z'/%3E%3C/svg%3E");
+        transform: rotate(0deg);
+    }
+
+    .faq-section .accordion-body {
+        padding: 0 0 1rem 0;
+        color: var(--text-secondary);
+        line-height: 1.8;
+        font-size: 0.92rem;
+    }
+
+    .faq-section .accordion-body strong {
+        color: var(--text-primary);
+    }
+
+    .faq-section .accordion-body ul {
+        padding-left: 1.25rem;
+        margin: 0.5rem 0;
+    }
+
+    .faq-section .accordion-body ul li {
+        margin-bottom: 0.25rem;
+    }
+
+    /* ===== CONTACT SUPPORT ===== */
+    .contact-support {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        border: 1px solid var(--border-color);
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+
+    .contact-support .support-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: rgba(74, 108, 247, 0.08);
+        color: #4a6cf7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin: 0 auto 1rem auto;
+    }
+
+    .contact-support h4 {
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 0.25rem 0;
+    }
+
+    .contact-support p {
+        color: var(--text-muted);
+        margin: 0 0 1.25rem 0;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .contact-support .btn-support {
+        background: #4a6cf7;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 60px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .contact-support .btn-support:hover {
+        background: #3a5cd9;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(74, 108, 247, 0.25);
+    }
+
+    .contact-support .support-channels {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .contact-support .support-channels a {
+        color: var(--text-muted);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .contact-support .support-channels a:hover {
+        color: #4a6cf7;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .help-wrapper {
+            padding: 1rem;
+        }
+
+        .help-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .help-categories {
+            grid-template-columns: 1fr;
+        }
+
+        .faq-section {
+            padding: 1.25rem;
+        }
+
+        .contact-support {
+            padding: 1.5rem;
+        }
+
+        .help-search .form-control {
+            height: 48px;
+            font-size: 0.9rem;
+        }
+
+        .help-search .search-btn {
+            padding: 6px 14px;
+            font-size: 0.75rem;
+        }
+
+        .contact-support .support-channels {
+            gap: 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .faq-section .accordion-button {
+            font-size: 0.85rem;
+            padding: 0.75rem 0;
+        }
+
+        .faq-section .accordion-body {
+            font-size: 0.85rem;
+        }
+
+        .help-category {
+            padding: 1.25rem;
+        }
+
+        .faq-section .faq-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    /* ===== DARK MODE ===== */
+    [data-bs-theme="dark"] .help-category {
+        background: var(--bg-card);
+        border-color: var(--border-color);
+    }
+
+    [data-bs-theme="dark"] .help-category:hover {
+        border-color: #4a6cf7;
+    }
+
+    [data-bs-theme="dark"] .faq-section {
+        background: var(--bg-card);
+        border-color: var(--border-color);
+    }
+
+    [data-bs-theme="dark"] .contact-support {
+        background: var(--bg-card);
+        border-color: var(--border-color);
+    }
+
+    [data-bs-theme="dark"] .help-search .form-control {
+        background: var(--bg-card);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    [data-bs-theme="dark"] .faq-section .accordion-button .faq-number {
+        background: rgba(74, 108, 247, 0.15);
+    }
+</style>
+{% endblock %}
+
+{% block main_content %}
+<div class="help-wrapper">
+    <!-- ===== HEADER ===== -->
+    <div class="help-header">
+        <h1><i class="bi bi-question-circle"></i> Help Center</h1>
+        <p>Find answers, guides, and support resources</p>
+    </div>
+
+    <!-- ===== SEARCH ===== -->
+    <div class="help-search">
+        <i class="bi bi-search search-icon"></i>
+        <input type="text" class="form-control" placeholder="Search for help articles..." id="helpSearch">
+        <button class="search-btn" onclick="searchHelp()">Search</button>
+    </div>
+
+    <!-- ===== CATEGORIES ===== -->
+    <div class="help-categories">
+        <a href="#" class="help-category">
+            <div class="category-icon blue"><i class="bi bi-person"></i></div>
+            <h4>Account & Profile</h4>
+            <p>Manage your account, settings, and security</p>
+            <span class="article-count"><i class="bi bi-file-text"></i> 8 articles</span>
+            <span class="category-link">View all →</span>
+        </a>
+
+        <a href="#" class="help-category">
+            <div class="category-icon gold"><i class="bi bi-people"></i></div>
+            <h4>Groups & Circles</h4>
+            <p>Create, join, and manage savings groups</p>
+            <span class="article-count"><i class="bi bi-file-text"></i> 12 articles</span>
+            <span class="category-link">View all →</span>
+        </a>
+
+        <a href="#" class="help-category">
+            <div class="category-icon green"><i class="bi bi-piggy-bank"></i></div>
+            <h4>Savings & Investments</h4>
+            <p>Smart saving and investment strategies</p>
+            <span class="article-count"><i class="bi bi-file-text"></i> 10 articles</span>
+            <span class="category-link">View all →</span>
+        </a>
+
+        <a href="#" class="help-category">
+            <div class="category-icon purple"><i class="bi bi-credit-card"></i></div>
+            <h4>Payments & Transfers</h4>
+            <p>Deposits, withdrawals, and transaction issues</p>
+            <span class="article-count"><i class="bi bi-file-text"></i> 6 articles</span>
+            <span class="category-link">View all →</span>
+        </a>
+
+        <a href="#" class="help-category">
+            <div class="category-icon red"><i class="bi bi-shield-lock"></i></div>
+            <h4>Security & Privacy</h4>
+            <p>Keep your account safe and secure</p>
+            <span class="article-count"><i class="bi bi-file-text"></i> 5 articles</span>
+            <span class="category-link">View all →</span>
+        </a>
+
+        <a href="#" class="help-category">
+            <div class="category-icon teal"><i class="bi bi-gear"></i></div>
+            <h4>Technical Support</h4>
+            <p>App issues, bugs, and technical help</p>
+            <span class="article-count"><i class="bi bi-file-text"></i> 4 articles</span>
+            <span class="category-link">View all →</span>
+        </a>
+    </div>
+
+    <!-- ===== FAQ SECTION ===== -->
+    <div class="faq-section">
+        <div class="faq-header">
+            <h3><i class="bi bi-chat-dots"></i> Frequently Asked Questions</h3>
+            <a href="#">View all FAQs →</a>
+        </div>
+
+        <div class="accordion" id="faqAccordion">
+            <!-- FAQ 1 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                        <span class="faq-number">1</span> How do I create a savings group?
+                    </button>
+                </h2>
+                <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        To create a savings group:
+                        <ul>
+                            <li>Go to the <strong>Groups</strong> section from your dashboard</li>
+                            <li>Click the <strong>"Create Group"</strong> button</li>
+                            <li>Fill in the group details (name, category, contribution amount, frequency)</li>
+                            <li>Set the maximum number of members</li>
+                            <li>Click <strong>"Create Group"</strong> to finalize</li>
+                        </ul>
+                        <p class="mt-2"><small class="text-muted">💡 Tip: Groups with 5-10 members are most effective.</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                        <span class="faq-number">2</span> How do I join a group?
+                    </button>
+                </h2>
+                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        To join a group:
+                        <ul>
+                            <li>Browse available groups in the <strong>Groups</strong> section</li>
+                            <li>Click <strong>"Join Group"</strong> on the group you're interested in</li>
+                            <li>Wait for the group admin to approve your request</li>
+                            <li>Once approved, you'll be notified and can start contributing</li>
+                        </ul>
+                        <p class="mt-2"><small class="text-muted">💡 Some groups may require you to meet certain criteria before joining.</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                        <span class="faq-number">3</span> How do I make a contribution?
+                    </button>
+                </h2>
+                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        To make a contribution:
+                        <ul>
+                            <li>Go to your group's page</li>
+                            <li>Click the <strong>"Make Contribution"</strong> button</li>
+                            <li>Enter the amount you wish to contribute</li>
+                            <li>Select your payment method</li>
+                            <li>Confirm the transaction</li>
+                        </ul>
+                        <p class="mt-2"><small class="text-muted">💡 Contributions are typically due on the specified frequency (weekly, monthly, quarterly).</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 4 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                        <span class="faq-number">4</span> Is my money safe?
+                    </button>
+                </h2>
+                <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        Yes, your money is safe with us. We implement:
+                        <ul>
+                            <li><strong>Secure encryption</strong> for all transactions</li>
+                            <li><strong>Two-factor authentication</strong> for account protection</li>
+                            <li><strong>Regular security audits</strong> and monitoring</li>
+                            <li><strong>24/7 fraud detection</strong> systems</li>
+                            <li><strong>Transparent transaction history</strong> available at all times</li>
+                        </ul>
+                        <p class="mt-2"><small class="text-muted">💡 We also recommend enabling 2FA for an extra layer of security.</small></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 5 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                        <span class="faq-number">5</span> What happens if I can't make a contribution?
+                    </button>
+                </h2>
+                <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        If you can't make a contribution:
+                        <ul>
+                            <li>Contact your group admin <strong>immediately</strong></li>
+                            <li>Work out a temporary solution or payment plan</li>
+                            <li>Consistently missed contributions may affect your standing in the group</li>
+                            <li>If issues persist, you may be removed from the group</li>
+                        </ul>
+                        <p class="mt-2"><small class="text-muted">💡 We recommend setting up automatic payments to avoid missing contributions.</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CONTACT SUPPORT ===== -->
+    <div class="contact-support">
+        <div class="support-icon"><i class="bi bi-headset"></i></div>
+        <h4>Still need help?</h4>
+        <p>Our support team is here to assist you with any questions or issues.</p>
+        <a href="#" class="btn-support">
+            <i class="bi bi-envelope"></i> Contact Support
+        </a>
+        
+        <div class="support-channels">
+            <a href="#"><i class="bi bi-envelope"></i> Email</a>
+            <a href="#"><i class="bi bi-whatsapp"></i> WhatsApp</a>
+            <a href="#"><i class="bi bi-telephone"></i> Call</a>
+            <a href="#"><i class="bi bi-chat"></i> Live Chat</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ============================================
+    // HELP SEARCH FUNCTIONALITY
+    // ============================================
+    function searchHelp() {
+        const query = document.getElementById('helpSearch').value.trim();
+        if (query) {
+            // Highlight matching FAQ items
+            const faqItems = document.querySelectorAll('.accordion-item');
+            let found = false;
+            
+            faqItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(query.toLowerCase())) {
+                    found = true;
+                    item.style.borderLeft = '4px solid #4a6cf7';
+                    item.style.paddingLeft = '8px';
+                    // Expand the accordion
+                    const collapseEl = item.querySelector('.accordion-collapse');
+                    if (collapseEl && !collapseEl.classList.contains('show')) {
+                        const bsCollapse = new bootstrap.Collapse(collapseEl, { show: true });
+                    }
+                } else {
+                    item.style.borderLeft = 'none';
+                    item.style.paddingLeft = '0';
+                }
+            });
+            
+            if (!found) {
+                alert('No results found. Try searching for a different term.');
+            }
+        } else {
+            // Reset all items
+            document.querySelectorAll('.accordion-item').forEach(item => {
+                item.style.borderLeft = 'none';
+                item.style.paddingLeft = '0';
+            });
+        }
+    }
+
+    // ============================================
+    // ENTER KEY SEARCH
+    // ============================================
+    document.getElementById('helpSearch')?.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchHelp();
+        }
+    });
+
+    // ============================================
+    // CATEGORY CLICK - SHOW ALERT (Demo)
+    // ============================================
+    document.querySelectorAll('.help-category').forEach(category => {
+        category.addEventListener('click', function(e) {
+            e.preventDefault();
+            const title = this.querySelector('h4')?.textContent || 'Category';
+            alert(`📚 Loading articles for "${title}"...`);
+        });
+    });
+
+    // ============================================
+    // CONTACT SUPPORT BUTTON
+    // ============================================
+    document.querySelector('.btn-support')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('📧 Support ticket created!\nOur team will respond within 24 hours.');
+    });
+</script>
+{% endblock %}

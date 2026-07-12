@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KoloCircle · Sign In</title>
 
-    <!-- Google Fonts: Inter + Playfair Display -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:ital,wght@0,400;0,700;1,700&display=swap" rel="stylesheet">
 
-    <!-- Bootstrap 5 + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="/static/css/login.css">
@@ -21,7 +19,7 @@
 <div class="login-wrapper fade-in">
     <div class="row g-0">
 
-        <!-- ===== LEFT: BRAND SIDE ===== -->
+        <!-- login side -->
         <div class="col-lg-6">
             <div class="brand-side">
                 <div class="brand-icon">
@@ -53,11 +51,11 @@
             </div>
         </div>
 
-        <!-- ===== RIGHT: LOGIN SIDE ===== -->
+        <!-- login right section -->
         <div class="col-lg-6">
             <div class="login-side fade-in-delay">
 
-                <!-- Logo -->
+                <!-- my Logo -->
                 <div class="logo">
                     <div class="logo-icon">KC</div>
                     <div class="logo-text">Kolo<span>Circle</span></div>
@@ -66,8 +64,9 @@
                 <h2>Sign In</h2>
                 <p class="welcome-text">Enter your credentials to continue</p>
 
-                <!-- Form -->
                 <form method="POST" action="{{ url_for('login') }}">
+                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
                     <div class="mb-3">
                         <label class="form-label">Email Address</label>
                         <div class="input-group-icon">
@@ -94,7 +93,7 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center mb-4">
+                    <!-- <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="remember">
                             <label class="form-check-label" for="remember">
@@ -102,7 +101,7 @@
                             </label>
                         </div>
                         <a href="#" class="forgot-link">Forgot Password?</a>
-                    </div>
+                    </div> -->
 
                     <button type="submit" class="btn btn-primary btn-login w-100">
                         Sign In <i class="bi bi-arrow-right ms-1"></i>
@@ -114,7 +113,6 @@
                     <span>or continue with</span>
                 </div>
 
-                <!-- Social buttons -->
                 <div class="d-flex gap-3">
                     <button class="social-btn w-50">
                         <i class="bi bi-google"></i> Google
@@ -124,7 +122,6 @@
                     </button>
                 </div>
 
-                <!-- Sign up link -->
                 <div class="signup-link">
                     Don't have an account?
                     <a href="/signup/">Create Account</a>
@@ -136,7 +133,6 @@
     </div>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

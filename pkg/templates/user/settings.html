@@ -1,0 +1,639 @@
+{% extends "user/layouts.html" %}
+
+{% block title %}Settings | KoloCircle{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ============================================
+       SETTINGS PAGE - IMPROVED VERSION
+       ============================================ */
+    .settings-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .page-header p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+    }
+
+    /* ===== SETTINGS GRID ===== */
+    .settings-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 1.5rem;
+    }
+
+    /* ===== SETTINGS CARD ===== */
+    .settings-card {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 1.5rem 1.75rem;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px var(--shadow-color);
+    }
+
+    .settings-card:hover {
+        border-color: #4a6cf7;
+        box-shadow: 0 4px 20px var(--shadow-color);
+        transform: translateY(-2px);
+    }
+
+    .settings-card.danger {
+        border-color: #dc3545;
+        background: rgba(220, 53, 69, 0.04);
+    }
+
+    .settings-card.danger:hover {
+        border-color: #dc3545;
+        box-shadow: 0 4px 20px rgba(220, 53, 69, 0.1);
+    }
+
+    /* ===== CARD HEADER ===== */
+    .settings-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .settings-header i {
+        font-size: 1.4rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: rgba(74, 108, 247, 0.1);
+        color: #4a6cf7;
+    }
+
+    .settings-card.danger .settings-header i {
+        background: rgba(220, 53, 69, 0.1);
+        color: #dc3545;
+    }
+
+    .settings-header h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .settings-header small {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 400;
+        display: block;
+    }
+
+    /* ===== FORM ===== */
+    .settings-form .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .settings-form .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .settings-form .form-group .form-control {
+        width: 100%;
+        height: 44px;
+        border-radius: 10px;
+        border: 1.5px solid var(--border-color);
+        padding: 0 1rem;
+        font-size: 0.9rem;
+        background: var(--bg-card);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
+    }
+
+    .settings-form .form-group .form-control:focus {
+        border-color: #4a6cf7;
+        box-shadow: 0 0 0 4px rgba(74, 108, 247, 0.08);
+        outline: none;
+    }
+
+    .settings-form .form-group .input-group-text {
+        background: var(--bg-secondary);
+        border: 1.5px solid var(--border-color);
+        border-right: none;
+        border-radius: 10px 0 0 10px;
+        color: var(--text-muted);
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+
+    .settings-form .form-group .input-group .form-control {
+        border-radius: 0 10px 10px 0;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary {
+        background: #4a6cf7;
+        border: none;
+        border-radius: 10px;
+        padding: 0.6rem 1.8rem;
+        font-weight: 600;
+        color: #fff;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background: #3a5cd9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(74, 108, 247, 0.3);
+    }
+
+    .btn-outline-secondary {
+        border-radius: 8px;
+        padding: 0.3rem 1.2rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1.5px solid var(--border-color);
+        background: transparent;
+        color: var(--text-muted);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-outline-secondary:hover {
+        border-color: #4a6cf7;
+        color: #4a6cf7;
+        background: rgba(74, 108, 247, 0.05);
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        border: none;
+        border-radius: 8px;
+        padding: 0.4rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #fff;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .btn-danger:hover {
+        background: #b91c1c;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    /* ===== TOGGLE ITEMS ===== */
+    .toggle-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .toggle-item:last-child {
+        border-bottom: none;
+    }
+
+    .toggle-item .info .label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+    }
+
+    .toggle-item .info .description {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    /* ===== SWITCH ===== */
+    .switch {
+        position: relative;
+        width: 46px;
+        height: 26px;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .switch .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #ced4da;
+        border-radius: 34px;
+        transition: all 0.3s ease;
+    }
+
+    .switch .slider::before {
+        content: '';
+        position: absolute;
+        height: 18px;
+        width: 18px;
+        left: 4px;
+        bottom: 4px;
+        background: white;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    .switch input:checked + .slider {
+        background: #4a6cf7;
+    }
+
+    .switch input:checked + .slider::before {
+        transform: translateX(20px);
+    }
+
+    .switch input:disabled + .slider {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* ===== DANGER ZONE ===== */
+    .danger-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .danger-item .info .label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+    }
+
+    .danger-item .info .description {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--text-muted);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .settings-page {
+            padding: 1rem;
+        }
+
+        .settings-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .settings-card {
+            padding: 1.25rem;
+        }
+
+        .toggle-item {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .danger-item {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .danger-item .btn-danger {
+            width: 100%;
+            text-align: center;
+        }
+
+        .settings-form .btn-primary {
+            width: 100%;
+            text-align: center;
+        }
+    }
+
+    /* ===== DARK MODE ===== */
+    [data-bs-theme="dark"] .settings-card {
+        background: var(--bg-card);
+        border-color: var(--border-color);
+    }
+
+    [data-bs-theme="dark"] .settings-card:hover {
+        border-color: #4a6cf7;
+    }
+
+    [data-bs-theme="dark"] .settings-card.danger {
+        background: rgba(220, 53, 69, 0.08);
+    }
+
+    [data-bs-theme="dark"] .settings-card.danger:hover {
+        border-color: #dc3545;
+    }
+
+    [data-bs-theme="dark"] .settings-header i {
+        background: rgba(74, 108, 247, 0.15);
+    }
+
+    [data-bs-theme="dark"] .settings-card.danger .settings-header i {
+        background: rgba(220, 53, 69, 0.15);
+    }
+
+    [data-bs-theme="dark"] .switch .slider {
+        background: #3a3a5a;
+    }
+
+    [data-bs-theme="dark"] .switch input:checked + .slider {
+        background: #4a6cf7;
+    }
+
+    [data-bs-theme="dark"] .btn-outline-secondary {
+        border-color: var(--border-color);
+        color: var(--text-muted);
+    }
+
+    [data-bs-theme="dark"] .btn-outline-secondary:hover {
+        border-color: #4a6cf7;
+        color: #4a6cf7;
+    }
+</style>
+{% endblock %}
+
+{% block main_content %}
+<div class="settings-page">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1><i class="bi bi-gear-fill me-2" style="color: #4a6cf7;"></i>Settings</h1>
+        <p>Manage your account preferences and security settings</p>
+    </div>
+
+    <!-- Settings Grid -->
+    <div class="settings-grid">
+        
+        <!-- ===== PROFILE SETTINGS ===== -->
+        <div class="settings-card">
+            <div class="settings-header">
+                <i class="bi bi-person"></i>
+                <div>
+                    <h3>Profile Settings</h3>
+                    <small>Update your personal information</small>
+                </div>
+            </div>
+            <form class="settings-form" id="profileForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" class="form-control" value="Sharon Okafor" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" value="sharon@example.com" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <div class="input-group">
+                        <span class="input-group-text">+234</span>
+                        <input type="tel" class="form-control" value="800 000 0000" placeholder="Phone number">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="bi bi-check2 me-2"></i>Update Profile
+                </button>
+            </form>
+        </div>
+
+        <!-- ===== SECURITY SETTINGS ===== -->
+        <div class="settings-card">
+            <div class="settings-header">
+                <i class="bi bi-shield-lock"></i>
+                <div>
+                    <h3>Security</h3>
+                    <small>Protect your account</small>
+                </div>
+            </div>
+            
+            <div class="toggle-item">
+                <div class="info">
+                    <span class="label">Two-Factor Authentication</span>
+                    <span class="description">Add an extra layer of security</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="toggle-item">
+                <div class="info">
+                    <span class="label">Change Password</span>
+                    <span class="description">Update your password regularly</span>
+                </div>
+                <button class="btn-outline-secondary" onclick="alert('Redirecting to change password...')">
+                    <i class="bi bi-arrow-right"></i> Change
+                </button>
+            </div>
+            
+            <div class="toggle-item" style="border-bottom: none;">
+                <div class="info">
+                    <span class="label">Session Management</span>
+                    <span class="description">Manage active sessions and devices</span>
+                </div>
+                <button class="btn-outline-secondary" onclick="alert('Redirecting to session management...')">
+                    <i class="bi bi-arrow-right"></i> Manage
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== NOTIFICATION SETTINGS ===== -->
+        <div class="settings-card">
+            <div class="settings-header">
+                <i class="bi bi-bell"></i>
+                <div>
+                    <h3>Notifications</h3>
+                    <small>Manage how you receive alerts</small>
+                </div>
+            </div>
+            
+            <div class="toggle-item">
+                <div class="info">
+                    <span class="label">Email Notifications</span>
+                    <span class="description">Receive updates via email</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="toggle-item">
+                <div class="info">
+                    <span class="label">Push Notifications</span>
+                    <span class="description">Get real-time alerts on your device</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <div class="toggle-item" style="border-bottom: none;">
+                <div class="info">
+                    <span class="label">Investment Updates</span>
+                    <span class="description">Portfolio performance alerts</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- ===== DANGER ZONE ===== -->
+        <div class="settings-card danger">
+            <div class="settings-header">
+                <i class="bi bi-exclamation-triangle"></i>
+                <div>
+                    <h3 style="color: #dc3545;">Danger Zone</h3>
+                    <small>Irreversible actions</small>
+                </div>
+            </div>
+            
+            <div class="danger-item">
+                <div class="info">
+                    <span class="label">Delete Account</span>
+                    <span class="description">Permanently remove your account and all data</span>
+                </div>
+                <button class="btn-danger" onclick="confirmDelete()">
+                    <i class="bi bi-trash3 me-1"></i>Delete Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SAVE ALL CHANGES ===== -->
+    <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+        <button class="btn-primary btn-lg" onclick="saveAll()" style="padding: 0.8rem 2.5rem;">
+            <i class="bi bi-check2-circle me-2"></i>Save All Changes
+        </button>
+        <button class="btn-outline-secondary" onclick="resetSettings()" style="padding: 0.8rem 2rem; font-size: 0.95rem;">
+            <i class="bi bi-arrow-counterclockwise me-2"></i>Reset
+        </button>
+    </div>
+</div>
+
+<!-- ===== DELETE CONFIRM MODAL ===== -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px; background: var(--bg-card);">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title text-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Delete Account
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your account? <strong>This action cannot be undone.</strong></p>
+                <p class="text-muted" style="font-size: 0.9rem;">All your data, groups, and transactions will be permanently removed.</p>
+                <div class="form-group mt-3">
+                    <label style="font-weight: 600; font-size: 0.85rem;">Type <strong class="text-danger">DELETE</strong> to confirm</label>
+                    <input type="text" class="form-control" id="confirmDeleteInput" placeholder="Type DELETE here" 
+                           style="border-radius: 10px; height: 44px; border: 1.5px solid var(--border-color);">
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn-outline-secondary" data-bs-dismiss="modal" style="padding: 0.6rem 1.5rem;">Cancel</button>
+                <button type="button" class="btn-danger" id="confirmDeleteBtn" disabled style="padding: 0.6rem 1.5rem;">
+                    <i class="bi bi-trash3 me-2"></i>Permanently Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ============================================
+    // DELETE CONFIRMATION
+    // ============================================
+    function confirmDelete() {
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        modal.show();
+    }
+
+    document.getElementById('confirmDeleteInput')?.addEventListener('input', function() {
+        const btn = document.getElementById('confirmDeleteBtn');
+        btn.disabled = this.value !== 'DELETE';
+    });
+
+    document.getElementById('confirmDeleteBtn')?.addEventListener('click', function() {
+        alert('⚠️ Account deletion request submitted.\nThis action is permanent and cannot be undone.');
+        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+    });
+
+    // ============================================
+    // PROFILE FORM SUBMIT
+    // ============================================
+    document.getElementById('profileForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('✅ Profile updated successfully!');
+        // Add AJAX call here to save data
+    });
+
+    // ============================================
+    // SAVE ALL CHANGES
+    // ============================================
+    function saveAll() {
+        alert('✅ All settings saved successfully!');
+        // Add AJAX call here to save all settings
+    }
+
+    // ============================================
+    // RESET SETTINGS
+    // ============================================
+    function resetSettings() {
+        if (confirm('Are you sure you want to reset all settings to default?')) {
+            alert('🔄 Settings have been reset to default.');
+            // Add reset logic here
+        }
+    }
+
+    // ============================================
+    // TOGGLE SWITCHES - Save State
+    // ============================================
+    document.querySelectorAll('.switch input').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            const label = this.closest('.toggle-item').querySelector('.label')?.textContent || 'Setting';
+            const status = this.checked ? 'enabled' : 'disabled';
+            console.log(`[${label}] ${status}`);
+            // Add AJAX call here to save preference
+        });
+    });
+</script>
+{% endblock %}

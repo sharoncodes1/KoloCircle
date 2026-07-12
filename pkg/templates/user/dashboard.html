@@ -1,0 +1,134 @@
+{% extends "user/layouts.html" %}
+
+{% block title %}Dashboard | KoloCircle{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_page.css') }}">
+{% endblock %}
+
+{% block main_content %}
+<div class="dashboard-page">
+    <!-- Topbar -->
+    <div class="topbar">
+        <div>
+            <h3>Welcome Back, <span class="highlight">{{ user.name if user else 'User' }}</span> 👋</h3>
+            <div class="subtitle">Here's your financial overview</div>
+        </div>
+        <div class="right-group">
+            <a href="{{ url_for('history') }}">
+
+                <div class="notification-bell">
+                    <i class="bi bi-bell"></i>
+                </a>
+                <span class="badge-dot"></span>
+            </div>
+            <div class="avatar-large">{{ user.name[0] if user and user.name else 'U' }}</div>
+        </div>
+    </div>
+
+    <!-- Balance Card -->
+    <div class="balance-card">
+        <div class="label">Total Portfolio (Wallet + Savings)</div>
+        <h1>₦{{ "{:,.2f}".format(wallet.balance + user.total_saved) }}</h1>
+        <div class="change">
+            <i class="bi bi-wallet2"></i> Wallet Balance: ₦{{ "{:,.2f}".format(wallet.balance) }}
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="bi bi-piggy-bank-fill"></i>
+            </div>
+            <h6>Total Savings</h6>
+            <h3>₦{{ "{:,.2f}".format(user.total_saved or 0.0) }}</h3>
+            <span class="change-badge positive">
+                <i class="bi bi-check-circle"></i> Active Plans
+            </span>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon gold">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <h6>Group Contributions</h6>
+            <h3>₦{{ "{:,.2f}".format(group_contribs_sum or 0.0) }}</h3>
+            <span class="change-badge positive">
+                <i class="bi bi-shield-check"></i> Verified
+            </span>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="bi bi-calendar-event"></i>
+            </div>
+            <h6>Upcoming Payment</h6>
+            <h3 style="font-size:1rem; margin-top:0.5rem; color:#198754;">{{ upcoming_payment }}</h3>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <div class="quick-card">
+            <div class="icon-wrapper primary">
+                <i class="bi bi-plus-circle"></i>
+            </div>
+            <h5>Create Savings Plan</h5>
+            <p>Save towards your next goal automatically with flexible plans.</p>
+            <a href="{{ url_for('savings') }}" class="btn btn-primary-custom">
+                Start Saving <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="quick-card">
+            <div class="icon-wrapper success">
+                <i class="bi bi-arrow-up-right-circle"></i>
+            </div>
+            <h5>Invest Funds</h5>
+            <p>Grow your wealth with curated investment portfolios managed by experts.</p>
+            <a href="{{ url_for('investments') }}" class="btn btn-success-custom">
+                Invest Now <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="transaction-card">
+        <div class="card-header">
+            <h5>Recent Transactions</h5>
+            <a href="{{ url_for('history') }}">View all <i class="bi bi-chevron-right"></i></a>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Activity</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if recent_transactions %}
+                        {% for tx in recent_transactions %}
+                        <tr>
+                            <td><strong>{{ tx.created_at.strftime('%d %b') }}</strong></td>
+                            <td>{{ tx.description or tx.transaction_type|capitalize }}</td>
+                            <td>₦{{ "{:,.2f}".format(tx.amount) }}</td>
+                            <td><span class="badge-status {{ tx.status }}">{{ tx.status|capitalize }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">
+                                <i class="bi bi-credit-card-2-back me-1"></i> No transactions yet
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

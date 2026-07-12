@@ -1,4 +1,4 @@
-{% extends "layouts/base.html" %}
+{% extends "user/layouts.html" %}
 
 {% block title %}Messages | KoloCircle{% endblock %}
 
@@ -198,8 +198,7 @@
 </style>
 {% endblock %}
 
-{% block content %}
-<!-- Page Header -->
+{% block main_content %}
 <div class="page-header">
     <div>
         <h1>Messages</h1>
@@ -208,99 +207,5 @@
     <span class="badge-new">3 New</span>
 </div>
 
-<!-- Messages List -->
-<div class="messages-list">
-    <!-- Message 1 - Unread -->
-    <div class="message-item unread">
-        <div class="message-avatar">
-            <i class="bi bi-shield-check"></i>
-        </div>
-        <div class="message-content">
-            <div class="message-header">
-                <span class="sender">Security Alert</span>
-                <span class="time">2 min ago</span>
-            </div>
-            <p class="message-preview">Your account was successfully verified. Your KoloCircle account is now fully active.</p>
-            <div class="message-actions">
-                <button class="btn-sm btn-primary-sm">Mark Read</button>
-                <button class="btn-sm btn-outline-sm">Archive</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Message 2 - Unread -->
-    <div class="message-item unread">
-        <div class="message-avatar">
-            <i class="bi bi-currency-dollar"></i>
-        </div>
-        <div class="message-content">
-            <div class="message-header">
-                <span class="sender">Investment Update</span>
-                <span class="time">1 hour ago</span>
-            </div>
-            <p class="message-preview">Your Tech Growth Fund investment has grown by 2.4% this week. Current value: ₦230,400.</p>
-            <div class="message-actions">
-                <button class="btn-sm btn-primary-sm">Mark Read</button>
-                <button class="btn-sm btn-outline-sm">Archive</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Message 3 - Unread -->
-    <div class="message-item unread">
-        <div class="message-avatar">
-            <i class="bi bi-gift"></i>
-        </div>
-        <div class="message-content">
-            <div class="message-header">
-                <span class="sender">Promotion</span>
-                <span class="time">3 hours ago</span>
-            </div>
-            <p class="message-preview">🎉 Refer a friend and earn ₦5,000 bonus! Share your referral link now.</p>
-            <div class="message-actions">
-                <button class="btn-sm btn-primary-sm">Mark Read</button>
-                <button class="btn-sm btn-outline-sm">Archive</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Message 4 - Read -->
-    <div class="message-item">
-        <div class="message-avatar">
-            <i class="bi bi-check-circle"></i>
-        </div>
-        <div class="message-content">
-            <div class="message-header">
-                <span class="sender">Savings Reminder</span>
-                <span class="time">Yesterday</span>
-            </div>
-            <p class="message-preview">Your monthly savings contribution of ₦50,000 is due in 5 days. Please fund your account.</p>
-            <div class="message-actions">
-                <button class="btn-sm btn-outline-sm">Archive</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Message 5 - Read -->
-    <div class="message-item">
-        <div class="message-avatar">
-            <i class="bi bi-people"></i>
-        </div>
-        <div class="message-content">
-            <div class="message-header">
-                <span class="sender">Group Update</span>
-                <span class="time">2 days ago</span>
-            </div>
-            <p class="message-preview">New member joined Family Ajo Circle. The group now has 8 members.</p>
-            <div class="message-actions">
-                <button class="btn-sm btn-outline-sm">Archive</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Load More -->
-<div class="load-more">
-    <button class="btn-load">Load More Messages</button>
-</div>
 {% endblock %}

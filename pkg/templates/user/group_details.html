@@ -1,0 +1,207 @@
+{% extends "user/layouts.html" %}
+
+{% block title %}Group Details | KoloCircle{% endblock %}
+
+{% block main_content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-people-fill text-primary"></i> {{ group.group_name }}</h2>
+            <p class="text-muted">Ajo Savings Circle Details</p>
+        </div>
+        <a href="{{ url_for('groups') }}" class="btn btn-outline-primary rounded-pill">
+            <i class="bi bi-arrow-left"></i> Back to Groups
+        </a>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="alertBox" style="display:none;" class="alert alert-dismissible fade show" role="alert">
+        <span id="alertMessage"></span>
+        <button type="button" class="btn-close" onclick="document.getElementById('alertBox').style.display='none'"></button>
+    </div>
+
+    <div class="row">
+        <!-- Main Stats Column -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div>
+                            <h5 class="fw-bold mb-1">Group Target Metrics</h5>
+                            <p class="text-muted small mb-0">{{ group.description or "No description provided." }}</p>
+                        </div>
+                        {% if member_record and member_record.status == 'Accepted' %}
+                        <button class="btn btn-primary btn-lg" onclick="makeContribution()" style="border-radius:10px;">
+                            <i class="bi bi-credit-card-fill me-2"></i> Contribute Now (₦{{ "{:,.2f}".format(group.contribution_amount) }})
+                        </button>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row g-3">
+                        <div class="col-6 col-sm-3 text-center">
+                            <h6 class="text-muted small mb-1">Contribution</h6>
+                            <h4 class="fw-bold mb-0">₦{{ "{:,.2f}".format(group.contribution_amount) }}</h4>
+                            <span class="badge bg-light text-primary mt-1">{{ group.frequency }}</span>
+                        </div>
+                        <div class="col-6 col-sm-3 text-center">
+                            <h6 class="text-muted small mb-1">Members Joined</h6>
+                            <h4 class="fw-bold mb-0">{{ group.current_members or 0 }}/{{ group.maximum_members }}</h4>
+                        </div>
+                        <div class="col-6 col-sm-3 text-center">
+                            <h6 class="text-muted small mb-1">Total Contributed</h6>
+                            <h4 class="fw-bold mb-0 text-success">₦{{ "{:,.2f}".format(user_total_contributed) }}</h4>
+                            <small class="text-muted">By You</small>
+                        </div>
+                        <div class="col-6 col-sm-3 text-center">
+                            <h6 class="text-muted small mb-1">Your Status</h6>
+                            <h4 class="fw-bold mb-0">
+                                {% if member_record %}
+                                    <span class="badge bg-{% if member_record.status == 'Accepted' %}success{% elif member_record.status == 'Pending' %}warning{% else %}danger{% endif %}">
+                                        {{ member_record.status }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Not a member</span>
+                                {% endif %}
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Members Status -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0">Accepted Members</h5>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Member Name</th>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Joined Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if members %}
+                                    {% for gm in members %}
+                                    <tr>
+                                        <td><strong>{{ gm.member.fullname }}</strong></td>
+                                        <td><code>@{{ gm.member.username }}</code></td>
+                                        <td>
+                                            {% if gm.user_id == group.admin_id %}
+                                                <span class="badge bg-danger">Group Admin</span>
+                                            {% else %}
+                                                <span class="badge bg-light text-dark">Member</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ gm.joined_at.strftime('%Y-%m-%d') }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-4">
+                                            No accepted members in this group yet.
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Column -->
+        <div class="col-md-4">
+            <!-- Payout Queue -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0">Payout Order Queue</h5>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <ul class="list-group list-group-flush">
+                        {% if payout_queue %}
+                            {% for member in payout_queue %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <span>{{ member.name }}</span>
+                                <span class="badge bg-success">Active</span>
+                            </li>
+                            {% endfor %}
+                        {% else %}
+                            <li class="list-group-item text-center text-muted border-0 py-3">
+                                No active members in payout queue.
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Contributions Log -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0">Contributions Log</h5>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    {% if contributions %}
+                        <div style="max-height: 300px; overflow-y: auto;">
+                            {% for c in contributions %}
+                            <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                <div>
+                                    <h6 class="mb-0 small fw-bold">{{ c.member.fullname }}</h6>
+                                    <small class="text-muted">{{ c.due_date.strftime('%Y-%m-%d') }}</small>
+                                </div>
+                                <span class="badge bg-{% if c.paid %}success{% else %}warning{% endif %}">
+                                    {% if c.paid %}Paid{% else %}Pending{% endif %}
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted small text-center mb-0 py-3">No contributions logged yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function makeContribution() {
+    if (confirm('Are you sure you want to deduct ₦{{ group.contribution_amount }} from your wallet balance to make this group contribution?')) {
+        const alertBox = document.getElementById('alertBox');
+        const alertMessage = document.getElementById('alertMessage');
+        
+        fetch('/groups/{{ group.id }}/contribute/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            alertBox.style.display = 'block';
+            if (data.success) {
+                alertBox.className = 'alert alert-success alert-dismissible fade show';
+                alertMessage.textContent = '✅ ' + data.message;
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                alertBox.className = 'alert alert-danger alert-dismissible fade show';
+                alertMessage.textContent = '⚠️ ' + data.message;
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alertBox.style.display = 'block';
+            alertBox.className = 'alert alert-danger alert-dismissible fade show';
+            alertMessage.textContent = '⚠️ Network error completing contribution.';
+        });
+    }
+}
+</script>
+{% endblock %}

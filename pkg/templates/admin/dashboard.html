@@ -1,0 +1,104 @@
+{% extends "user/layouts.html" %}
+
+{% block title %}Admin Dashboard | KoloCircle{% endblock %}
+
+{% block main_content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-speedometer2 text-danger"></i> Admin Control Panel</h2>
+            <p class="text-muted">KoloCircle system overview and administrative operations</p>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-4">
+                    <div class="fs-1 text-primary mb-2"><i class="bi bi-people-fill"></i></div>
+                    <h6 class="text-muted text-uppercase mb-1" style="font-size:0.75rem;">Total Users</h6>
+                    <h3 class="fw-bold mb-0">{{ user_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-4">
+                    <div class="fs-1 text-success mb-2"><i class="bi bi-collection-fill"></i></div>
+                    <h6 class="text-muted text-uppercase mb-1" style="font-size:0.75rem;">Saving Groups</h6>
+                    <h3 class="fw-bold mb-0">{{ group_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-4">
+                    <div class="fs-1 text-warning mb-2"><i class="bi bi-piggy-bank-fill"></i></div>
+                    <h6 class="text-muted text-uppercase mb-1" style="font-size:0.75rem;">Total Savings Portfolio</h6>
+                    <h3 class="fw-bold mb-0">₦{{ "{:,.2f}".format(total_savings) }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-4">
+                    <div class="fs-1 text-info mb-2"><i class="bi bi-wallet2"></i></div>
+                    <h6 class="text-muted text-uppercase mb-1" style="font-size:0.75rem;">Total Wallet Funds</h6>
+                    <h3 class="fw-bold mb-0">₦{{ "{:,.2f}".format(total_wallets) }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">Registered Users</h5>
+            <a href="{{ url_for('admin.admin_users') }}" class="btn btn-outline-primary btn-sm">View All Users</a>
+        </div>
+        <div class="card-body px-4 pb-4">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Wallet Bal.</th>
+                            <th>Savings Bal.</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if users %}
+                            {% for u in users %}
+                            <tr>
+                                <td><strong>{{ u.fullname }}</strong></td>
+                                <td><code>@{{ u.username }}</code></td>
+                                <td>{{ u.email }}</td>
+                                <td>{{ u.phone or '-' }}</td>
+                                <td>₦{{ "{:,.2f}".format(u.wallet_balance or 0.0) }}</td>
+                                <td>₦{{ "{:,.2f}".format(u.total_saved or 0.0) }}</td>
+                                <td>
+                                    {% if u.is_admin %}
+                                        <span class="badge bg-danger">Admin</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">User</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">No users found.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

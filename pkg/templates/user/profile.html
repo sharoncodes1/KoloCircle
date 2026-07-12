@@ -1,0 +1,682 @@
+{% extends "user/layouts.html" %}
+
+{% block title %}Profile | KoloCircle{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-page .page-header {
+        margin-bottom: 32px;
+    }
+    
+    .profile-page .page-header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+    }
+    
+    .profile-page .page-header .text-muted {
+        color: var(--gray-500);
+        font-size: 1rem;
+        margin: 4px 0 0 0;
+    }
+    
+    .profile-card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        text-align: center;
+        border: 1px solid var(--gray-200);
+        transition: all 0.3s ease;
+    }
+    
+    .profile-card:hover {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    
+    .profile-card .profile-avatar {
+        margin-bottom: 16px;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .profile-card .profile-avatar .avatar-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), #4a7bb5);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin: 0 auto;
+        border: 4px solid var(--gray-200);
+        transition: all 0.3s ease;
+    }
+    
+    .profile-card .profile-avatar img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--gray-200);
+    }
+    
+    .profile-card .profile-avatar .avatar-edit-badge {
+        position: absolute;
+        bottom: 4px;
+        right: 4px;
+        background: var(--primary);
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .profile-card .profile-avatar .avatar-edit-badge:hover {
+        transform: scale(1.1);
+        background: var(--primary-light);
+    }
+    
+    .profile-card .profile-name {
+        font-weight: 700;
+        font-size: 1.3rem;
+        color: var(--gray-900);
+        margin: 0;
+    }
+    
+    .profile-card .profile-email {
+        color: var(--gray-500);
+        font-size: 0.9rem;
+        margin: 4px 0 12px 0;
+    }
+    
+    .profile-card .profile-badge {
+        display: inline-block;
+        padding: 2px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+    
+    .profile-card .profile-badge.admin {
+        background: #fff3cd;
+        color: #856404;
+    }
+    
+    .profile-card .profile-badge.user {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+    
+    .profile-card .profile-stats {
+        display: flex;
+        justify-content: space-around;
+        padding: 16px 0;
+        border-top: 1px solid var(--gray-200);
+        border-bottom: 1px solid var(--gray-200);
+        margin: 12px 0 16px 0;
+    }
+    
+    .profile-card .profile-stats .stat {
+        text-align: center;
+    }
+    
+    .profile-card .profile-stats .stat .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+    
+    .profile-card .profile-stats .stat .stat-label {
+        font-size: 0.75rem;
+        color: var(--gray-500);
+    }
+    
+    .profile-card .profile-info-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        color: var(--gray-600);
+        margin: 6px 0;
+    }
+    
+    .profile-card .profile-info-item i {
+        color: var(--gray-400);
+        width: 18px;
+    }
+    
+    .profile-edit-card {
+        background: white;
+        border-radius: 16px;
+        padding: 28px 32px;
+        border: 1px solid var(--gray-200);
+        transition: all 0.3s ease;
+    }
+    
+    .profile-edit-card:hover {
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    }
+    
+    .profile-edit-card .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .profile-edit-card h4 {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--gray-900);
+        margin: 0;
+    }
+    
+    .profile-edit-card .card-header .badge-status {
+        font-size: 0.7rem;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: #d4edda;
+        color: #155724;
+    }
+    
+    .profile-edit-card .form-label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--gray-700);
+        margin-bottom: 6px;
+    }
+    
+    .profile-edit-card .form-control {
+        border-radius: 12px;
+        border: 1.5px solid var(--gray-200);
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+    
+    .profile-edit-card .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(10, 44, 92, 0.06);
+    }
+    
+    .profile-edit-card .form-control:disabled {
+        background: var(--gray-100);
+        cursor: not-allowed;
+    }
+    
+    .profile-edit-card .form-text {
+        color: var(--gray-500);
+        font-size: 0.8rem;
+    }
+    
+    .profile-edit-card .btn-primary {
+        background: var(--primary);
+        color: white;
+        padding: 10px 28px;
+        border-radius: 60px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .profile-edit-card .btn-primary:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(10, 44, 92, 0.2);
+    }
+    
+    .profile-edit-card .btn-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .settings-list .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--gray-100);
+        transition: all 0.3s ease;
+    }
+    
+    .settings-list .setting-item:last-child {
+        border-bottom: none;
+    }
+    
+    .settings-list .setting-item .setting-info {
+        flex: 1;
+    }
+    
+    .settings-list .setting-item .setting-info strong {
+        display: block;
+        font-size: 0.95rem;
+        color: var(--gray-900);
+    }
+    
+    .settings-list .setting-item .setting-info small {
+        color: var(--gray-500);
+        font-size: 0.8rem;
+    }
+    
+    .settings-list .setting-item .setting-action .btn {
+        border-radius: 60px;
+        padding: 6px 18px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .settings-list .setting-item .setting-action .btn-outline-primary:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-1px);
+    }
+    
+    .settings-list .setting-item .setting-action .btn-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+    
+    /* Alert Messages */
+    .alert-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        max-width: 500px;
+    }
+    
+    @media (max-width: 768px) {
+        .profile-card .profile-stats {
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .profile-edit-card {
+            padding: 20px;
+        }
+        
+        .settings-list .setting-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .settings-list .setting-item .setting-action {
+            width: 100%;
+        }
+        
+        .settings-list .setting-item .setting-action .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block main_content %}
+<div class="profile-page">
+    <!-- Page Header -->
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1>My Profile</h1>
+            <p class="text-muted">Manage your personal information and account settings</p>
+        </div>
+        <div>
+            <a href="{{ url_for('user.dashboard') }}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert-container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <!-- Profile Card -->
+        <div class="col-lg-4 col-md-5 mb-4">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    {% if user.avatar %}
+                        <img src="{{ url_for('static', filename='uploads/' + user.avatar) }}" alt="{{ user.name }}">
+                    {% else %}
+                        <div class="avatar-large">{{ user.get_avatar_initial() }}</div>
+                    {% endif %}
+                    <label for="avatar-upload" class="avatar-edit-badge" title="Change profile picture">
+                        <i class="bi bi-camera"></i>
+                    </label>
+                    <input type="file" id="avatar-upload" accept="image/*" style="display:none;">
+                </div>
+
+                <h3 class="profile-name">{{ user.name }}</h3>
+                <p class="profile-email">{{ user.email }}</p>
+                
+                <span class="profile-badge {% if user.is_admin %}admin{% else %}user{% endif %}">
+                    <i class="bi {% if user.is_admin %}bi-shield-check{% else %}bi-person{% endif %}"></i>
+                    {% if user.is_admin %}Administrator{% else %}Member{% endif %}
+                </span>
+
+                <div class="profile-stats">
+                    <div class="stat">
+                        <div class="stat-number">{{ user.groups_joined|default(0) }}</div>
+                        <div class="stat-label">Groups</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">{{ user.total_savings|default(0) }}</div>
+                        <div class="stat-label">Savings</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">{{ user.total_investments|default(0) }}</div>
+                        <div class="stat-label">Investments</div>
+                    </div>
+                </div>
+
+                <div class="profile-info-item">
+                    <i class="bi bi-phone"></i> 
+                    <span>{{ user.phone or 'No phone number provided' }}</span>
+                </div>
+                <div class="profile-info-item">
+                    <i class="bi bi-calendar"></i> 
+                    <span>Joined {{ user.created_at.strftime('%B %Y') }}</span>
+                </div>
+                {% if user.location %}
+                <div class="profile-info-item">
+                    <i class="bi bi-geo-alt"></i> 
+                    <span>{{ user.location }}</span>
+                </div>
+                {% endif %}
+                
+                <hr class="my-3">
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm" onclick="document.getElementById('avatar-upload').click()">
+                        <i class="bi bi-camera"></i> Change Photo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Form -->
+        <div class="col-lg-8 col-md-7">
+            <div class="profile-edit-card mb-4">
+                <div class="card-header">
+                    <h4><i class="bi bi-pencil-square me-2"></i>Edit Profile Information</h4>
+                    <span class="badge-status"><i class="bi bi-check-circle"></i> Active</span>
+                </div>
+                
+                <form method="POST" action="{{ url_for('user.update_profile') }}" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" value="{{ user.name }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" value="{{ user.email }}" disabled>
+                            <small class="form-text">Email cannot be changed</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" name="phone" value="{{ user.phone or '' }}" placeholder="+234 800 000 0000">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" name="location" value="{{ user.location or '' }}" placeholder="City, Country">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Bio</label>
+                        <textarea class="form-control" name="bio" rows="3" placeholder="Tell us about yourself...">{{ user.bio or '' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Profile Picture</label>
+                        <input type="file" class="form-control" name="avatar" accept="image/*">
+                        <small class="form-text">Upload a JPG, PNG or GIF. Max size 5MB.</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i> Update Profile
+                    </button>
+                </form>
+            </div>
+
+            <!-- Account Settings -->
+            <div class="profile-edit-card">
+                <h4 class="mb-3"><i class="bi bi-gear me-2"></i>Account Settings</h4>
+                
+                <div class="settings-list">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong>Change Password</strong>
+                            <small>Update your password to keep your account secure</small>
+                        </div>
+                        <div class="setting-action">
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                                <i class="bi bi-key"></i> Change
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong>Email Notifications</strong>
+                            <small>Manage your email notification preferences</small>
+                        </div>
+                        <div class="setting-action">
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#notificationModal">
+                                <i class="bi bi-bell"></i> Manage
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong>Two-Factor Authentication</strong>
+                            <small>Add an extra layer of security to your account</small>
+                        </div>
+                        <div class="setting-action">
+                            <button class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-shield-check"></i> Enable
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong>Delete Account</strong>
+                            <small class="text-danger">Permanently delete your account and all data</small>
+                        </div>
+                        <div class="setting-action">
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-key me-2"></i>Change Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('user.change_password') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Current Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" name="current_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">New Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" name="new_password" required minlength="8">
+                        <small class="form-text">Minimum 8 characters</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm New Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" name="confirm_password" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Preferences Modal -->
+<div class="modal fade" id="notificationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-bell me-2"></i>Notification Preferences</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('user.update_notifications') }}">
+                <div class="modal-body">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="email_group" {% if user.notify_group %}checked{% endif %}>
+                        <label class="form-check-label">Group activity updates</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="email_savings" {% if user.notify_savings %}checked{% endif %}>
+                        <label class="form-check-label">Savings milestones</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="email_investments" {% if user.notify_investments %}checked{% endif %}>
+                        <label class="form-check-label">Investment updates</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="email_promotions" {% if user.notify_promotions %}checked{% endif %}>
+                        <label class="form-check-label">Promotions and offers</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Preferences</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Delete Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger"><strong>Warning:</strong> This action cannot be undone.</p>
+                <p>Are you sure you want to permanently delete your account? All your data, including groups, savings, and investments will be permanently removed.</p>
+                <div class="alert alert-warning">
+                    <i class="bi bi-info-circle"></i> Please type <strong>"DELETE"</strong> to confirm.
+                </div>
+                <input type="text" class="form-control" placeholder="Type DELETE to confirm" id="delete-confirm">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn" disabled>Permanently Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Profile Page -->
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Avatar upload preview
+        const avatarUpload = document.getElementById('avatar-upload');
+        if (avatarUpload) {
+            avatarUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const avatarImg = document.querySelector('.profile-avatar img');
+                        if (avatarImg) {
+                            avatarImg.src = e.target.result;
+                        } else {
+                            const avatarDiv = document.querySelector('.profile-avatar .avatar-large');
+                            if (avatarDiv) {
+                                avatarDiv.innerHTML = `<img src="${e.target.result}" alt="Profile picture">`;
+                            }
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Delete account confirmation
+        const deleteConfirm = document.getElementById('delete-confirm');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        
+        if (deleteConfirm && confirmDeleteBtn) {
+            deleteConfirm.addEventListener('input', function() {
+                if (this.value === 'DELETE') {
+                    confirmDeleteBtn.disabled = false;
+                } else {
+                    confirmDeleteBtn.disabled = true;
+                }
+            });
+            
+            confirmDeleteBtn.addEventListener('click', function() {
+                if (confirmDeleteBtn.disabled === false) {
+                    // Submit delete form or redirect to delete endpoint
+                    window.location.href = "{{ url_for('user.delete_account') }}";
+                }
+            });
+        }
+
+        // Auto-dismiss alerts after 5 seconds
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            setTimeout(() => {
+                alert.classList.remove('show');
+                setTimeout(() => alert.remove(), 300);
+            }, 5000);
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}
