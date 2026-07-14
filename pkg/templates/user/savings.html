@@ -366,6 +366,9 @@
         background: #4a6cf7;
         border-radius: 4px;
         transition: width 0.6s ease;
+        transition: width 0.6s ease;
+        width: var(--progress-width, 0%);
+
     }
 
     .cw-progress-fill.green { background: #198754; }
@@ -851,7 +854,7 @@
                 <p class="cw-plan-desc">Auto-saves ₦{{ "{:,.2f}".format(plan.amount) }} · Status: <span class="text-capitalize">{{ plan.status }}</span></p>
                 <div class="cw-plan-progress">
                     <div class="cw-progress-track">
-                        <div class="cw-progress-fill" style="width: {{ plan.progress_percentage() }}%;"></div>
+                        <div class="cw-progress-fill" style="--progress-width: {{ plan.progress_percentage() }}%;"></div>
                     </div>
                     <div class="cw-progress-text">
                         <span class="cw-amount">₦{{ "{:,.2f}".format(plan.saved_amount or 0.0) }}</span>

@@ -348,6 +348,10 @@
         border-radius: 4px;
         transition: width 0.6s ease;
         background: #4a6cf7;
+        transition: width 0.6s ease;
+        width: var(--progress);
+
+
     }
 
     .cw-progress-fill.green { background: #198754; }
@@ -859,7 +863,7 @@
                 </div>
                 <div class="cw-group-progress">
                     <div class="cw-progress-track">
-                        <div class="cw-progress-fill" style="width: {{ (group.current_members or 0) / group.maximum_members * 100 }}%;"></div>
+                        <div class="cw-progress-fill" style="--progress: {{ ((group.current_members or 0) / group.maximum_members * 100)|round(1) }}%;"></div>
                     </div>
                     <div class="cw-progress-text">
                         <span>{{ group.current_members or 0 }} of {{ group.maximum_members }} members joined</span>
