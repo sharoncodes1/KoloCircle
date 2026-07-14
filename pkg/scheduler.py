@@ -176,11 +176,11 @@ def run_deductions(app):
 
 def start_scheduler(app):
     scheduler = BackgroundScheduler()
-    scheduler.add_job(
-        func=run_deductions,
-        trigger="interval",
-        seconds=30,  # check every 30 seconds for quick updates/testing
-        args=[app]
-    )
-    scheduler.start()
+    # scheduler.add_job(
+    #     func=run_deductions,
+    #     trigger="interval",
+    #     seconds=30,  # check every 30 seconds for quick updates/testing
+    #     args=[app]
+    # )
+    # scheduler.start()
     print("Background scheduler started successfully!")
