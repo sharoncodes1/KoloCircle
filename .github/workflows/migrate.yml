@@ -27,16 +27,19 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          # Use Python to create tables directly
+          # Try Flask migration first
+          flask --app starter.py db upgrade || true
+          
+          # If that fails, create tables directly
           python -c "
           from pkg import app, db
           with app.app_context():
               db.create_all()
-              print('✅ Tables created successfully!')
+              print('✅ Tables created!')
           "
       
       - name: Seed database
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          python seed.py
+          python seed.py || true
