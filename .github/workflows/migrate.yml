@@ -1,13 +1,12 @@
-# .github/workflows/migrate.yml
-name: Run Database Migrations
+name: Setup Database
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:  # Allows manual trigger
+  workflow_dispatch:
 
 jobs:
-  migrate:
+  setup-db:
     runs-on: ubuntu-latest
     
     steps:
@@ -24,13 +23,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Run database migrations
+      - name: Setup database
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          flask db upgrade
+          # Use Python to create tables directly
+          python -c "
+          from pkg import app, db
+          with app.app_context():
+              db.create_all()
+              print('✅ Tables created successfully!')
+          "
       
-      - name: Seed database (optional)
+      - name: Seed database
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
