@@ -1,0 +1,163 @@
+# ============================================
+# PYTHON
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv*
+
+# ============================================
+# SECRETS & CONFIGURATION FILES (CRITICAL!)
+# ============================================
+.env
+.env.local
+.env.*.local
+.flaskenv
+config_local.py
+config_local.*.py
+settings_local.py
+secrets.json
+secrets.yml
+keys.json
+credentials.json
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.p8
+*.pk
+secrets/
+credentials/
+keys/
+
+# ============================================
+# FLASK / WEB
+# ============================================
+instance/
+.webassets-cache
+*.db
+*.sqlite
+*.sqlite3
+*.db.sqlite
+*.db3
+
+# ============================================
+# DATABASE
+# ============================================
+*.db
+*.sqlite
+*.sqlite3
+*.db.sqlite
+*.db3
+*.sql.bak
+*.sqlite.bak
+
+# ============================================
+# IDE / EDITOR
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.iml
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+
+# ============================================
+# LOGS & TEMP
+# ============================================
+logs/
+*.log
+log/
+tmp/
+temp/
+*.tmp
+*.temp
+.cache/
+*.pid
+*.port
+*.sock
+
+# ============================================
+# TESTING
+# ============================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+*.cover
+coverage.xml
+*.pytest_cache/
+.tox/
+
+# ============================================
+# BUILD & DISTRIBUTION
+# ============================================
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+*.whl
+*.tar.gz
+*.zip
+*.rar
+
+# ============================================
+# DEPLOYMENT
+# ============================================
+*.pid
+*.port
+*.sock
+docker-compose.override.yml
+deploy/
+k8s/
+*.kubeconfig
+
+# ============================================
+# OS FILES
+# ============================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.directory
+*.directory
+$RECYCLE.BIN/
+
+# ============================================
+# PROJECT SPECIFIC
+# ============================================
+# KoloCircle specific
+instance/kolo_circle.db
+*.db.backup
+*.sql.backup
+
+# Paystack/Cowrywise keys
+paystack_keys.json
+cowrywise_keys.json
+api_keys.py
+
+# Uploads (keep empty folder structure)
+pkg/static/uploads/
+!pkg/static/uploads/.gitkeep
+
+# Migration files (optional - keep if you want version control)
+# migrations/
+# !migrations/README
