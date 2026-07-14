@@ -881,47 +881,41 @@
     </div>
 
     <!-- ===== RECENT TRANSACTIONS ===== -->
-    <div class="cw-transactions">
+     <div class="cw-transactions">
         <div class="cw-tx-header">
             <h4><i class="bi bi-clock-history"></i> Recent Transactions</h4>
             <a href="{{ url_for('history') }}">View All <i class="bi bi-chevron-right"></i></a>
         </div>
         <div class="cw-tx-list">
-            <div class="cw-tx-item">
-                <div class="cw-tx-icon credit">
-                    <i class="bi bi-arrow-down-circle"></i>
+            {% if transactions %}
+                {% for tx in transactions %}
+                    <div class="cw-tx-item">
+                        <div class="cw-tx-icon {% if tx.transaction_type in ['savings_deposit', 'fund', 'interest'] %}credit{% else %}debit{% endif %}">
+                            <i class="bi bi-{% if tx.transaction_type in ['savings_deposit', 'fund'] %}arrow-down-circle{% elif tx.transaction_type == 'interest' %}graph-up-arrow{% else %}arrow-up-circle{% endif %}"></i>
+                        </div>
+                        <div class="cw-tx-info">
+                            <span class="cw-tx-name">{{ tx.description or tx.transaction_type|replace('_', ' ')|title }}</span>
+                            <span class="cw-tx-date">{{ tx.created_at.strftime('%b %d, %Y at %I:%M %p') if tx.created_at else 'N/A' }}</span>
+                        </div>
+                        <span class="cw-tx-amount {% if tx.transaction_type in ['savings_deposit', 'fund', 'interest'] %}positive{% else %}negative{% endif %}">
+                            {% if tx.transaction_type in ['savings_deposit', 'fund', 'interest'] %}+{% else %}-{% endif %}₦{{ "%.2f"|format(tx.amount) }}
+                        </span>
+                        <span class="cw-tx-status {{ tx.status }}">
+                            {{ tx.status|capitalize }}
+                        </span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="cw-tx-item" style="justify-content: center; padding: 1.5rem;">
+                    <div class="cw-tx-info" style="text-align: center;">
+                        <span class="cw-tx-name" style="font-size: 1rem;">No transactions yet</span>
+                        <span class="cw-tx-date">Start saving to see your transactions here</span>
+                    </div>
                 </div>
-                <div class="cw-tx-info">
-                    <span class="cw-tx-name">Savings Deposit</span>
-                    <span class="cw-tx-date">Today, 10:30 AM</span>
-                </div>
-                <span class="cw-tx-amount positive">+₦50,000</span>
-                <span class="cw-tx-status completed">Completed</span>
-            </div>
-            <div class="cw-tx-item">
-                <div class="cw-tx-icon debit">
-                    <i class="bi bi-arrow-up-circle"></i>
-                </div>
-                <div class="cw-tx-info">
-                    <span class="cw-tx-name">Withdrawal</span>
-                    <span class="cw-tx-date">Yesterday, 2:00 PM</span>
-                </div>
-                <span class="cw-tx-amount negative">-₦25,000</span>
-                <span class="cw-tx-status pending">Pending</span>
-            </div>
-            <div class="cw-tx-item">
-                <div class="cw-tx-icon credit">
-                    <i class="bi bi-arrow-down-circle"></i>
-                </div>
-                <div class="cw-tx-info">
-                    <span class="cw-tx-name">Interest Payout</span>
-                    <span class="cw-tx-date">Aug 15, 2026</span>
-                </div>
-                <span class="cw-tx-amount positive">+₦4,200</span>
-                <span class="cw-tx-status completed">Completed</span>
-            </div>
+            {% endif %}
         </div>
     </div>
+</div>
 </div>
 
 <!-- ===== NEW PLAN MODAL ===== -->
@@ -994,7 +988,7 @@
                         <select class="form-select" required id="addPlanSelect">
                             <option value="">Select a plan...</option>
                             {% for plan in savings_plans %}
-                            <option value="{{ plan.id }}">{{ plan.title }}</option>
+                                <option value="{{ plan.id }}">{{ plan.title }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -1003,75 +997,70 @@
                         <input type="number" class="form-control" placeholder="Enter amount" required id="addAmount" min="100">
                         <small class="text-muted">Minimum: ₦100</small>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email Address</label>
-                        <input type="email" class="form-control" placeholder="your@email.com" required id="payerEmail" value="{{ user.email if user else '' }}">
-                    </div>
                 </form>
-                <div class="alert alert-info small mt-2">
-                    <i class="bi bi-shield-check"></i> Secure payment via Paystack
-                </div>
-                <!-- Debug: Show if key is loaded -->
-                <div class="small text-muted mt-2" id="debugKey">
-                    {% if paystack_public_key %}
-                        ✅ Paystack key loaded
-                    {% else %}
-                        ❌ Paystack key not configured
-                    {% endif %}
-                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px;">Cancel</button>
-                <button type="button" class="paystack-btn" onclick="initializePaystackPayment()" id="paystackPayBtn">
-                    <i class="bi bi-credit-card"></i>
-                    <span id="paystackBtnText">Pay with Paystack</span>
-                    <div class="payment-loading" id="paymentLoading">
-                        <div class="spinner"></div>
-                        Processing...
-                    </div>
+                <button type="button" class="btn btn-success" onclick="processAddMoney()" style="border-radius:10px;">
+                    <i class="bi bi-check2 me-2"></i>Add Money
                 </button>
             </div>
         </div>
     </div>
 </div>
 
+
 <!-- ===== WITHDRAW MODAL ===== -->
-<div class="modal fade" id="withdrawModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="newPlanModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-arrow-up-right me-2" style="color:#dc3545;"></i>Withdraw Money</h5>
+                <h5 class="modal-title"><i class="bi bi-plus-circle me-2" style="color:#4a6cf7;"></i>Create New Savings Plan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="withdrawForm">
+                <form id="newPlanForm" action="{{ url_for('create_savings_plan') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="mb-3">
-                        <label class="form-label">Plan</label>
-                        <select class="form-select" required id="withdrawPlanSelect">
-                            <option value="">Select a plan...</option>
-                            {% for plan in savings_plans %}
-                            <option value="{{ plan.id }}">{{ plan.title }}</option>
-                            {% endfor %}
+                        <label class="form-label">Plan Name</label>
+                        <input type="text" class="form-control" placeholder="e.g., New Car Fund" required name="name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Plan Type</label>
+                        <select class="form-select" required name="type">
+                            <option value="">Select type...</option>
+                            <option value="flexible">Flexible</option>
+                            <option value="locked">Locked</option>
+                            <option value="target">Target</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Amount</label>
-                        <input type="number" class="form-control" placeholder="₦0.00" required id="withdrawAmount">
+                        <label class="form-label">Target Amount (₦)</label>
+                        <input type="number" class="form-control" placeholder="0.00" required name="target_amount">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Withdraw To</label>
-                        <select class="form-select" required>
-                            <option value="">Select destination...</option>
-                            <option value="bank">Bank Account</option>
-                            <option value="wallet">Wallet</option>
+                        <label class="form-label">Contribution Amount (₦)</label>
+                        <input type="number" class="form-control" placeholder="0.00" required name="amount">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Frequency</label>
+                        <select class="form-select" required name="frequency">
+                            <option value="">Select frequency...</option>
+                            <option value="Weekly">Weekly</option>
+                            <option value="Monthly">Monthly</option>
+                            <option value="Daily">Daily</option>
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" rows="2" placeholder="What are you saving for?" name="description"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px;">Cancel</button>
-                <button type="button" class="btn btn-danger" onclick="processWithdraw()" style="border-radius:10px;">
-                    <i class="bi bi-check2 me-2"></i>Withdraw
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('newPlanForm').submit()" style="border-radius:10px;">
+                    <i class="bi bi-check2 me-2"></i>Create Plan
                 </button>
             </div>
         </div>

@@ -22,7 +22,7 @@ def inject_paystack_key():
     }
 
 # ===== HOMEPAGE =====
-@app.route("/")
+@app.route("/") 
 def home():
     return render_template("index.html")
 
@@ -59,11 +59,11 @@ def login():
                     return redirect(url_for('dashboard'))
                 else:
                     print("Wrong password")
-                    flash('Invalid Password', category='errormsg')
+                    flash('Invalid Password', category='')
                     return redirect(url_for('login'))
             else:
                 print("User not found")
-                flash('Invalid email or username', category='errormsg')
+                flash('Invalid email or username', category='')
                 return redirect(url_for('login'))
         else:
             print("Form validation failed")
@@ -86,21 +86,21 @@ def signup():
     
     # Validation
     if not fname or not lname or not email or not password:
-        flash('All fields are compulsory!', 'errormsg')
+        flash('All fields are compulsory!', 'errormsg')  # ✅ Added category
         return redirect(url_for('signup'))
     
     if password != confirm_password:
-        flash('The two passwords must match!', 'errormsg')
+        flash('The two passwords must match!', 'errormsg')  # ✅ Added category
         return redirect(url_for('signup'))
     
     if len(password) < 8:
-        flash('Password must be at least 8 characters!', 'errormsg')
+        flash('Password must be at least 8 characters!', 'errormsg')  # ✅ Added category
         return redirect(url_for('signup'))
     
     # Check if user already exists
     existing_user = User.query.filter_by(email=email).first()
     if existing_user:
-        flash('Email already registered. Please login.', 'errormsg')
+        flash('Email already registered. Please login.', 'errormsg')  # ✅ Added category
         return redirect(url_for('signup'))
     
     # ===== CREATE USER =====
@@ -135,19 +135,14 @@ def signup():
         db.session.commit()
         
         print(f"User and Wallet created: {email}")
-        flash('✅ Account created successfully! Please login.', 'success')
-        
-        try:
-            return redirect(url_for('login'))
-        except:
-            return redirect('/login/')
+        flash('✅ Account created successfully! Please login.', 'success')  # ✅ Added category
+        return redirect(url_for('login'))
     
     except Exception as e:
         db.session.rollback()
         print(f"Error creating user: {e}")
-        flash('An error occurred. Please try again.', 'errormsg')
-        return redirect(url_for('signup'))  
-
+        flash('An error occurred. Please try again.', 'errormsg')  # ✅ Added category
+        return redirect(url_for('signup'))
 @app.get('/logout/')
 def logout():
     if session.get('useronline'):
@@ -223,6 +218,8 @@ def savings():
     wallet = Wallet.query.filter_by(user_id=user.id).first()
     monthly_savings = 0.0
     interest_earned = 0.0
+    transactions = [] 
+
 
     if wallet:
         month_start = datetime.datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -241,6 +238,12 @@ def savings():
                 WalletTransaction.description.ilike('%interest%')
             ).all()
         )
+
+        transactions = WalletTransaction.query.filter_by(wallet_id=wallet.id)\
+            .order_by(WalletTransaction.created_at.desc())\
+            .limit(5)\
+            .all()
+
 
     balance_change_text = f"+₦{monthly_savings:,.2f} this month" if monthly_savings else "₦0.00 this month"
 
@@ -280,6 +283,7 @@ def savings():
     return render_template("user/savings.html", 
                          user=user, 
                          savings_plans=savings_plans,
+                         transactions=transactions,  # ✅ Now included
                          paystack_public_key=PAYSTACK_PUBLIC_KEY,
                          total_savings_balance=total_savings_balance,
                          total_saved=total_saved,
@@ -293,6 +297,9 @@ def savings():
                          interest_change_text=interest_change_text,
                          interest_change_class=interest_change_class,
                          interest_change_icon=interest_change_icon)
+
+
+
 
 # ===== SAVINGS - ADD MONEY WITH PAYSTACK =====
 @app.route('/savings/add/<int:plan_id>/', methods=['GET', 'POST'])
