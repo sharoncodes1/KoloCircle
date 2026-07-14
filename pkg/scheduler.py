@@ -1,10 +1,13 @@
 # pkg/scheduler.py
-import datetime
+import datetime, os
 from . import db
 from .models import User, Wallet, Savings, Group, GroupMember, Contribution, WalletTransaction, Notification, create_notification, create_transaction
 from apscheduler.schedulers.background import BackgroundScheduler
 
 def run_deductions(app):
+    if os.getenv('RENDER') or os.getenv('FLASK_ENV') == 'production':
+        print("[Scheduler] Skipping deductions in production environment")
+        return
     with app.app_context():
         now = datetime.datetime.now()
         print(f"[Scheduler] Running deductions check at {now}...")
@@ -186,15 +189,19 @@ def run_deductions(app):
 #     print("Background scheduler started successfully!")
 
 # pkg/scheduler.py
-import os
-
 def start_scheduler(app):
-    # Don't start scheduler in production if DATABASE_URL is not set properly
-    if os.getenv('FLASK_ENV') == 'production':
-        print("Scheduler disabled in production")
+    # Don't start scheduler on Render
+    if os.getenv('RENDER') or os.getenv('FLASK_ENV') == 'production':
+        print("[Scheduler] Disabled in production environment")
         return
     
+    from apscheduler.schedulers.background import BackgroundScheduler
     scheduler = BackgroundScheduler()
-    scheduler.add_job(...)
+    scheduler.add_job(
+        func=run_deductions,
+        trigger="interval",
+        seconds=30,
+        args=[app]
+    )
     scheduler.start()
     print("Background scheduler started successfully!")
