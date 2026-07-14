@@ -13,8 +13,7 @@ migrate = Migrate()
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_pyfile('config.py')  # the config in instance
-    app.config.from_object('pkg.config.LiveConfig')  # the config in pkg
-    
+    app.config.from_object('pkg.config.GeneralConfig')    
     db.init_app(app)
     csrf.init_app(app)
     migrate.init_app(app, db)     
