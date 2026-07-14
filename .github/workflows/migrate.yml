@@ -1,4 +1,4 @@
-name: Setup Database
+name: Run Database Migrations
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup-db:
+  migrate:
     runs-on: ubuntu-latest
     
     steps:
@@ -23,57 +23,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Create database tables
+      - name: Run migrations
         env:
-          DATABASE_URL: ${{ secrets.POSTGRES }}  # ✅ Changed from DATABASE_URL to POSTGRES
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          python -c "
-          import os
-          import sys
-          
-          db_url = os.getenv('DATABASE_URL')
-          if not db_url:
-              print('❌ DATABASE_URL is not set!')
-              sys.exit(1)
-          
-          print(f'✅ DATABASE_URL is set (length: {len(db_url)})')
-          
-          try:
-              from pkg import app, db
-              with app.app_context():
-                  db.create_all()
-                  print('✅ Tables created successfully!')
-          except Exception as e:
-              print(f'❌ Error: {e}')
-              sys.exit(1)
-          "
+          flask db upgrade
       
       - name: Seed database
         env:
-          DATABASE_URL: ${{ secrets.POSTGRES }}  # ✅ Changed from DATABASE_URL to POSTGRES
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          python -c "
-          try:
-              from pkg import app, db
-              from pkg.models import User
-              from werkzeug.security import generate_password_hash
-              
-              with app.app_context():
-                  if User.query.count() == 0:
-                      admin = User(
-                          fullname='System Administrator',
-                          username='admin',
-                          email='admin@kolocircle.com',
-                          password=generate_password_hash('admin'),
-                          is_admin=True,
-                          wallet_balance=1000000.0,
-                          total_saved=0.0
-                      )
-                      db.session.add(admin)
-                      db.session.commit()
-                      print('✅ Admin user created!')
-                  else:
-                      print('ℹ️ Admin user already exists')
-          except Exception as e:
-              print(f'⚠️ Seed error: {e}')
-          "
+          python seed.py
