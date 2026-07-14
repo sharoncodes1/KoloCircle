@@ -25,13 +25,12 @@ jobs:
       
       - name: Create database tables
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.POSTGRES }}  # ✅ Changed from DATABASE_URL to POSTGRES
         run: |
           python -c "
           import os
           import sys
           
-          # Check if DATABASE_URL is set
           db_url = os.getenv('DATABASE_URL')
           if not db_url:
               print('❌ DATABASE_URL is not set!')
@@ -39,7 +38,6 @@ jobs:
           
           print(f'✅ DATABASE_URL is set (length: {len(db_url)})')
           
-          # Create tables
           try:
               from pkg import app, db
               with app.app_context():
@@ -52,7 +50,7 @@ jobs:
       
       - name: Seed database
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.POSTGRES }}  # ✅ Changed from DATABASE_URL to POSTGRES
         run: |
           python -c "
           try:
