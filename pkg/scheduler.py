@@ -174,13 +174,27 @@ def run_deductions(app):
                     print(f"Failed: Insufficient funds for {user.email} for group {group.group_name}")
 
 
+# def start_scheduler(app):
+#     scheduler = BackgroundScheduler()
+#     # scheduler.add_job(
+#     #     func=run_deductions,
+#     #     trigger="interval",
+#     #     seconds=30,  # check every 30 seconds for quick updates/testing
+#     #     args=[app]
+#     # )
+#     # scheduler.start()
+#     print("Background scheduler started successfully!")
+
+# pkg/scheduler.py
+import os
+
 def start_scheduler(app):
+    # Don't start scheduler in production if DATABASE_URL is not set properly
+    if os.getenv('FLASK_ENV') == 'production':
+        print("Scheduler disabled in production")
+        return
+    
     scheduler = BackgroundScheduler()
-    # scheduler.add_job(
-    #     func=run_deductions,
-    #     trigger="interval",
-    #     seconds=30,  # check every 30 seconds for quick updates/testing
-    #     args=[app]
-    # )
-    # scheduler.start()
+    scheduler.add_job(...)
+    scheduler.start()
     print("Background scheduler started successfully!")
