@@ -23,23 +23,59 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Setup database
+      - name: Create database tables
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          # Try Flask migration first
-          flask --app starter.py db upgrade || true
-          
-          # If that fails, create tables directly
           python -c "
-          from pkg import app, db
-          with app.app_context():
-              db.create_all()
-              print('✅ Tables created!')
+          import os
+          import sys
+          
+          # Check if DATABASE_URL is set
+          db_url = os.getenv('DATABASE_URL')
+          if not db_url:
+              print('❌ DATABASE_URL is not set!')
+              sys.exit(1)
+          
+          print(f'✅ DATABASE_URL is set (length: {len(db_url)})')
+          
+          # Create tables
+          try:
+              from pkg import app, db
+              with app.app_context():
+                  db.create_all()
+                  print('✅ Tables created successfully!')
+          except Exception as e:
+              print(f'❌ Error: {e}')
+              sys.exit(1)
           "
       
       - name: Seed database
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          python seed.py || true
+          python -c "
+          try:
+              from pkg import app, db
+              from pkg.models import User
+              from werkzeug.security import generate_password_hash
+              
+              with app.app_context():
+                  if User.query.count() == 0:
+                      admin = User(
+                          fullname='System Administrator',
+                          username='admin',
+                          email='admin@kolocircle.com',
+                          password=generate_password_hash('admin'),
+                          is_admin=True,
+                          wallet_balance=1000000.0,
+                          total_saved=0.0
+                      )
+                      db.session.add(admin)
+                      db.session.commit()
+                      print('✅ Admin user created!')
+                  else:
+                      print('ℹ️ Admin user already exists')
+          except Exception as e:
+              print(f'⚠️ Seed error: {e}')
+          "
