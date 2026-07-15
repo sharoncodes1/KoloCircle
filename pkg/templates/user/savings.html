@@ -783,7 +783,7 @@
                 <i class="bi bi-clock-history"></i> History
             </a>
             <a href="#" class="cw-btn-primary" data-bs-toggle="modal" data-bs-target="#newPlanModal">
-                <i class="bi bi-plus-lg"></i> New Plan
+                <i class="bi bi-plus-lg"></i> Create a Savings Plan
             </a>
         </div>
     </div>
@@ -802,6 +802,8 @@
             <a href="#" class="cw-btn-sm-outline" onclick="withdrawMoney()">
                 <i class="bi bi-arrow-up-right"></i> Withdraw
             </a>
+          
+
         </div>
     </div>
 
@@ -867,6 +869,9 @@
                     </button>
                     <button class="cw-btn-withdraw" onclick="withdrawFromPlan('{{ plan.id }}')">
                         <i class="bi bi-arrow-up-right"></i> Withdraw
+                    </button>
+                      <button class="cw-btn-withdraw" onclick="deletePlan('{{ plan.id }}', '{{ plan.title }}')" style="border-color: #dc3545; color: #dc3545;">
+                    <i class="bi bi-trash"></i>
                     </button>
                 </div>
             </div>
@@ -997,12 +1002,24 @@
                         <input type="number" class="form-control" placeholder="Enter amount" required id="addAmount" min="100">
                         <small class="text-muted">Minimum: ₦100</small>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-control" placeholder="your@email.com" required id="payerEmail" value="{{ user.email if user else '' }}">
+                    </div>
                 </form>
+                <div class="alert alert-info small mt-2">
+                    <i class="bi bi-shield-check"></i> Secure payment via Paystack
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px;">Cancel</button>
-                <button type="button" class="btn btn-success" onclick="processAddMoney()" style="border-radius:10px;">
-                    <i class="bi bi-check2 me-2"></i>Add Money
+                <button type="button" class="paystack-btn" onclick="initializePaystackPayment()" id="paystackPayBtn">
+                    <i class="bi bi-credit-card"></i>
+                    <span id="paystackBtnText">Pay with Paystack</span>
+                    <div class="payment-loading" id="paymentLoading">
+                        <div class="spinner"></div>
+                        Processing...
+                    </div>
                 </button>
             </div>
         </div>
@@ -1011,56 +1028,41 @@
 
 
 <!-- ===== WITHDRAW MODAL ===== -->
-<div class="modal fade" id="newPlanModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="withdrawModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-plus-circle me-2" style="color:#4a6cf7;"></i>Create New Savings Plan</h5>
+                <h5 class="modal-title"><i class="bi bi-arrow-up-right me-2" style="color:#dc3545;"></i>Withdraw Money</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="newPlanForm" action="{{ url_for('create_savings_plan') }}" method="POST">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <form id="withdrawForm">
                     <div class="mb-3">
-                        <label class="form-label">Plan Name</label>
-                        <input type="text" class="form-control" placeholder="e.g., New Car Fund" required name="name">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Plan Type</label>
-                        <select class="form-select" required name="type">
-                            <option value="">Select type...</option>
-                            <option value="flexible">Flexible</option>
-                            <option value="locked">Locked</option>
-                            <option value="target">Target</option>
+                        <label class="form-label">Plan</label>
+                        <select class="form-select" required id="withdrawPlanSelect">
+                            <option value="">Select a plan...</option>
+                            {% for plan in savings_plans %}
+                                <option value="{{ plan.id }}">{{ plan.title }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Target Amount (₦)</label>
-                        <input type="number" class="form-control" placeholder="0.00" required name="target_amount">
+                        <label class="form-label">Amount</label>
+                        <input type="number" class="form-control" placeholder="Enter amount" required id="withdrawAmount">
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Contribution Amount (₦)</label>
-                        <input type="number" class="form-control" placeholder="0.00" required name="amount">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Frequency</label>
-                        <select class="form-select" required name="frequency">
-                            <option value="">Select frequency...</option>
-                            <option value="Weekly">Weekly</option>
-                            <option value="Monthly">Monthly</option>
-                            <option value="Daily">Daily</option>
+                        <label class="form-label">Withdraw To</label>
+                        <select class="form-select" required>
+                            <option value="bank">Bank Account</option>
+                            <option value="wallet">Wallet</option>
                         </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-control" rows="2" placeholder="What are you saving for?" name="description"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius:10px;">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="document.getElementById('newPlanForm').submit()" style="border-radius:10px;">
-                    <i class="bi bi-check2 me-2"></i>Create Plan
+                <button type="button" class="btn btn-danger" onclick="processWithdraw()" style="border-radius:10px;">
+                    <i class="bi bi-check2 me-2"></i>Withdraw
                 </button>
             </div>
         </div>
@@ -1074,9 +1076,9 @@
 
 {% block extra_js %}
 <script>
-    // ============================================
+   
     // CREATE PLAN
-    // ============================================
+   
     function setPlanName(value) {
         const planNameInput = document.getElementById('planName');
         if (planNameInput) {
@@ -1100,9 +1102,9 @@
         }
     }
 
-    // ============================================
+   
     // ADD MONEY - PAYSTACK INTEGRATION
-    // ============================================
+   
     function addToPlan(planName) {
         if (planName) {
             document.getElementById('addPlanSelect').value = planName;
@@ -1228,9 +1230,9 @@
         btn.disabled = false;
     }
 
-    // ============================================
+   
     // WITHDRAW MONEY
-    // ============================================
+   
     function withdrawFromPlan(planName) {
         if (planName) {
             document.getElementById('withdrawPlanSelect').value = planName;
@@ -1251,9 +1253,9 @@
         }
     }
 
-    // ============================================
+   
     // QUICK ACTIONS
-    // ============================================
+   
     function addMoney() {
         const modal = new bootstrap.Modal(document.getElementById('addMoneyModal'));
         modal.show();
@@ -1264,9 +1266,35 @@
         modal.show();
     }
 
-    // ============================================
+    function deletePlan(planId, planTitle) {
+    if (!confirm(`Are you sure you want to delete "${planTitle}"? This cannot be undone.`)) {
+        return;
+    }
+
+    fetch(`/savings/delete/${planId}/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`✅ ${data.message}`);
+            location.reload();
+        } else {
+            alert(`⚠️ ${data.message}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('⚠️ An error occurred while deleting the plan.');
+    });
+}
+   
     // ENTER KEY SUPPORT FOR MODALS
-    // ============================================
+   
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             const modal = document.querySelector('.modal.show');
@@ -1277,9 +1305,9 @@
         }
     });
 
-    // ============================================
+   
     // AUTO-FILL EMAIL FROM USER
-    // ============================================
+   
     document.addEventListener('DOMContentLoaded', function() {
         const emailInput = document.getElementById('payerEmail');
         // Email is already set via template

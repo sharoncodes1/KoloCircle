@@ -483,3 +483,16 @@ body {
         .fade-in-delay {
             animation: fadeIn 0.6s ease 0.15s both;
         }
+
+        .forgot-link {
+    color: #4a6cf7;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.forgot-link:hover {
+    color: #3a5cd9;
+    text-decoration: underline;
+}

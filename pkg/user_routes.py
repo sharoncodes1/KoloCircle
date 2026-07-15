@@ -2,7 +2,7 @@ import os, secrets, datetime, json, requests
 from flask import render_template, url_for, request, redirect, flash, session, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from pkg import app, csrf, db
-from pkg.models import User, Wallet, Savings, SavingPlan, Saving, Transaction, Group, GroupMember, Contribution, WalletTransaction, Notification, create_notification, create_transaction
+from pkg.models import User, Wallet, Savings, SavingPlan, Saving, Transaction, Group, GroupMember, Contribution, WalletTransaction, Notification, create_notification, create_transaction,PasswordResetToken
 from pkg.forms import RegisterForm, LoginForm
 from dotenv import load_dotenv
 
@@ -283,7 +283,7 @@ def savings():
     return render_template("user/savings.html", 
                          user=user, 
                          savings_plans=savings_plans,
-                         transactions=transactions,  # ✅ Now included
+                         transactions=transactions,  
                          paystack_public_key=PAYSTACK_PUBLIC_KEY,
                          total_savings_balance=total_savings_balance,
                          total_saved=total_saved,
@@ -298,8 +298,15 @@ def savings():
                          interest_change_class=interest_change_class,
                          interest_change_icon=interest_change_icon)
 
-
-
+# @app.route('/debug/reset-plan/<int:plan_id>/')
+# def debug_reset_plan(plan_id):
+#     plan = Savings.query.get(plan_id)
+#     if plan:
+#         plan.status = 'active'
+#         plan.saved_amount = 0.0
+#         db.session.commit()
+#         return f"Reset plan {plan_id} to active"
+#     return "Plan not found"
 
 # ===== SAVINGS - ADD MONEY WITH PAYSTACK =====
 @app.route('/savings/add/<int:plan_id>/', methods=['GET', 'POST'])
@@ -525,7 +532,6 @@ def verify_payment():
         return jsonify({'success': False, 'message': 'Payment system not configured'})
         
     try:
-        # Verify with Paystack API
         url = f'https://api.paystack.co/transaction/verify/{reference}'
         headers = {
             'Authorization': f'Bearer {PAYSTACK_SECRET_KEY}',
@@ -556,18 +562,22 @@ def verify_payment():
                 db.session.add(wallet)
                 db.session.commit()
                 
-            # Find the savings plan
+            # ===== FIXED: query SavingPlan, not Savings =====
             saving_plan = None
             if plan_id_or_title:
                 try:
-                    saving_plan = Savings.query.get(int(plan_id_or_title))
-                except:
+                    saving_plan = SavingPlan.query.get(int(plan_id_or_title))
+                except (ValueError, TypeError):
                     pass
                 if not saving_plan:
-                    saving_plan = Savings.query.filter_by(user_id=user.id, title=plan_id_or_title).first()
+                    saving_plan = SavingPlan.query.filter_by(user_id=user.id, title=plan_id_or_title).first()
                     
             if not saving_plan:
                 return jsonify({'success': False, 'message': 'Savings plan not found'})
+                
+            # Verify this plan actually belongs to the paying user
+            if saving_plan.user_id != user.id:
+                return jsonify({'success': False, 'message': 'This plan does not belong to you'})
                 
             # Update savings plan progress
             saving_plan.saved_amount = (saving_plan.saved_amount or 0.0) + amount
@@ -610,7 +620,6 @@ def verify_payment():
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
 
-
 # ===== SAVINGS PLAN CRUD =====
 @app.route('/savings/create/', methods=['POST'])
 def create_savings_plan():
@@ -626,6 +635,10 @@ def create_savings_plan():
     
     if not all([name, target_amount, amount]):
         flash('Please fill in all required fields.', 'error')
+        return redirect(url_for('savings'))
+    existing_plan = Savings.query.filter_by(user_id=user.id, title=name, status='active').first()
+    if existing_plan:
+        flash(f'You already have an active plan named "{name}". Choose a different name or add money to the existing plan.', 'error')
         return redirect(url_for('savings'))
         
     try:
@@ -658,6 +671,16 @@ def create_savings_plan():
         
     return redirect(url_for('savings'))
 
+@app.route('/debug/plans/')
+def debug_plans():
+    if 'useronline' not in session:
+        return "Not logged in"
+    user_id = session['useronline']
+    plans = Savings.query.filter_by(user_id=user_id).all()
+    output = []
+    for p in plans:
+        output.append(f"id={p.id}, title={p.title}, status={repr(p.status)}, saved_amount={p.saved_amount}, user_id={p.user_id}")
+    return "<br>".join(output) or "No plans found for this user"
 
 # ===== USER WALLET ROUTES =====
 @app.route('/wallet/')
@@ -1157,3 +1180,31 @@ def handle_group_request(request_id, action):
         return jsonify({'success': True, 'message': 'Request rejected successfully!'})
         
     return jsonify({'success': False, 'message': 'Invalid action'}), 400
+
+
+@app.route('/savings/delete/<int:plan_id>/', methods=['POST'])
+def delete_savings_plan(plan_id):
+    if 'useronline' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    user_id = session['useronline']
+    plan = Savings.query.get_or_404(plan_id)
+    
+    if plan.user_id != user_id:
+        return jsonify({'success': False, 'message': 'This plan does not belong to you'}), 403
+    
+    # Optional but recommended: block deleting a plan that still has money in it
+    if plan.saved_amount and plan.saved_amount > 0:
+        return jsonify({
+            'success': False, 
+            'message': f'This plan has ₦{plan.saved_amount:,.2f} saved. Withdraw the funds before deleting.'
+        }), 400
+    
+    try:
+        title = plan.title
+        db.session.delete(plan)
+        db.session.commit()
+        return jsonify({'success': True, 'message': f'"{title}" was deleted successfully.'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500

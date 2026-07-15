@@ -234,7 +234,7 @@ class Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
 
-# ===== HELPER FUNCTIONS =====
+
 def create_notification(user_id, title, message, type='info', icon='bi-info-circle'):
     """Helper to create a notification"""
     notification = Notification(
@@ -268,3 +268,27 @@ def create_transaction(user_id, amount, type, description, payment_reference=Non
     db.session.add(transaction)
     db.session.commit()
     return transaction
+
+class PasswordResetToken(db.Model):
+    __tablename__ = 'password_reset_tokens'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    token = db.Column(db.String(200), unique=True, nullable=False)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    used = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    user = db.relationship('User', backref='reset_tokens')
+    
+    def __repr__(self):
+        return f'<PasswordResetToken for user {self.user_id}>'
+    
+    def is_expired(self):
+        """Check if the token has expired"""
+        return datetime.utcnow() > self.expires_at
+    
+    def is_valid(self):
+        """Check if the token is valid (not expired and not used)"""
+        return not self.is_expired() and not self.used
