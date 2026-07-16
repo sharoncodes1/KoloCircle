@@ -169,7 +169,6 @@ class Contribution(db.Model):
     payment_reference = db.Column(db.String(100), unique=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Add relationship for convenience
     member = db.relationship('User', backref='group_contributions')
 
 
